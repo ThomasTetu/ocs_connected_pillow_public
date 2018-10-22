@@ -1,2 +1,4 @@
 # Projet OCS
-## Coussin connecté
+## Coussin connectÃ©
+
+Wiki : https://github.com/ltb-bossuyt/ocs-coussin-connecte/wiki

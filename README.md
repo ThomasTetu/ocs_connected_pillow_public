@@ -1,20 +1,22 @@
-# Projet OCS
-## Coussin connecté
+# Projet OCS : Coussin connecté
 @Todo
 
 ## Liens utiles
  * [Wiki](https://github.com/ltb-bossuyt/ocs-coussin-connecte/wiki)
 
-## Pré-requis
+## Démarrage
+
+### Pré-requis
  * Install [node.js](https://nodejs.org/en/)
  * Install [npm] (Si non installé avec node.js)
 
-## Comment lancer le projet
+### Installation
 Exécuter la commande suivante pour installer les packages :
 ```
     npm install
 ```
 
+## Lancement du projet
 ### Environnement : Développement
 Permet la recompilation du projet à chaque modification de code.
 ```
@@ -25,4 +27,7 @@ Permet la recompilation du projet à chaque modification de code.
 Lien d'accès au serveur : `http://localhost:8080/`
 
 ### Environnement : Production
+@todo
+
+## Dépendances
 @todo

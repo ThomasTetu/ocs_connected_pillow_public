@@ -2,9 +2,9 @@
 @Todo
 
 ## Liens utiles
- * [Wiki](wiki)
+ * [Wiki](https://github.com/ltb-bossuyt/ocs-coussin-connecte/wiki)
  * [Architecture du serveur](src/README.md)
- * [Dépendances de l'application](dependencies)
+ * [Dépendances de l'application](DEPENDENCIES.md)
 ## Démarrage
 
 ### Pré-requis

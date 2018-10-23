@@ -3,6 +3,7 @@
  */
 import * as express from "express";
 import { HomeController } from "./controller/home.controller";
+import {TutuController} from "./controller/tutu.controller";
 
 /**
  * Feature imports
@@ -31,11 +32,17 @@ export class Router {
      */
     public insertRoutes(): void {
         this.insertHomeRoute();
+        this.insertTutuRoute();
     }
 
     private insertHomeRoute(): void {
         const homeController: HomeController = new HomeController();
 
         this.app.get("/", homeController.retrieveHome);
+    }
+
+    private insertTutuRoute(): void {
+        const tutuController: TutuController = new TutuController();
+        this.app.get("/tutu", tutuController.tutu);
     }
 }

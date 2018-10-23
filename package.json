@@ -25,7 +25,8 @@
     "fs-extra-promise": "^1.0.1",
     "jsonschema": "^1.2.0",
     "lodash": "^4.17.11",
-    "plus.container": "^1.1.16"
+    "plus.container": "^1.1.16",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "@types/body-parser": "1.16.8",

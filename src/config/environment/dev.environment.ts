@@ -6,4 +6,5 @@ export const devConfig: Object = {
         "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
     },
+    URL_GOOGLE: "http://google.com"
 };

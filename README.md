@@ -22,5 +22,7 @@ Permet la recompilation du projet à chaque modification de code.
     npm run dev
 ```
 
+Lien d'accès au serveur : `http://localhost:8080/`
+
 ### Environnement : Production
 @todo

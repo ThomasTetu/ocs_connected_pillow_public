@@ -3,11 +3,11 @@
 @Todo
 
 ## Liens utiles
- *
+ * [Wiki](https://github.com/ltb-bossuyt/ocs-coussin-connecte/wiki)
 
 ## Pré-requis
- * Install [node.js]
- * Install [npm]
+ * Install [node.js](https://nodejs.org/en/)
+ * Install [npm] (Si non installé avec node.js)
 
 ## Comment lancer le projet
 Exécuter la commande suivante pour installer les packages :

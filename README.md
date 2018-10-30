@@ -29,6 +29,3 @@ Lien d'accès au serveur : `http://localhost:8080/`
 
 ### Environnement : Production
 @todo
-
-## Dépendances
-@todo

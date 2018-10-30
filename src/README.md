@@ -16,16 +16,16 @@ Différentes configuration du serveur en mode développement/production
   * prod.environment.ts
 
 ### nodemon
-  * **dev.nodemon.json :** Configuration de nodemon en environnement de développpeemnt
+  * **dev.nodemon.json :** Configuration de nodemon en environnement de développpement
 
 ## controller
-Todo
+Les contrôleurs s'occupent d'exécuter différents traitement sur les données.
 
 ## middleware
 Todo
 
 ## services
-Les services permettent de fournir des ressources à l'application.
+Les services permettent de fournir et partager des ressources à l'application
 
 ### utils
   * **container.service.ts :** Service du container d'injection de dépendances

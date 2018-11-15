@@ -9,7 +9,7 @@
 
 ### Pré-requis
  * Install [node.js](https://nodejs.org/en/)
- * Install [npm] (Si non installé avec node.js)
+ * Install npm (Si non installé avec node.js)
 
 ### Installation
 Exécuter la commande suivante pour installer les packages :

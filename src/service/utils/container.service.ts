@@ -7,8 +7,8 @@ import * as _ from "lodash";
 /**
  * Feature imports
  */
-import { ServiceContainer } from "../../business/utils/service-container.enum";
-import { SERVICES } from "../../config/services.config";
+import {ServiceContainer} from "../../business/utils/service-container.enum";
+import {SERVICES} from "../../config/services.config";
 
 /**
  * Service de container d'injection de dépendance

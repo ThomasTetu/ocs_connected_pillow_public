@@ -6,8 +6,8 @@ import * as _ from "lodash";
 /**
  * Feature imports
  */
-import { NodeEnvironment } from "./business/utils/node-environment";
-import { environmentsConfiguration } from "./config/environments.config";
+import {NodeEnvironment} from "./business/utils/node-environment";
+import {environmentsConfiguration} from "./config/environments.config";
 
 /**
  * Loader de la configuration de l'application

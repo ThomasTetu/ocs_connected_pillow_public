@@ -5,7 +5,6 @@ import * as express from "express";
 import * as request from "request";
 import * as Container from "plus.container";
 
-
 /**
  * Exemple de contrôleur
  * Route : "/"
@@ -25,12 +24,12 @@ export class HomeController {
         // On récupère l'URL de google
         const googleUrl = configuration.URL_GOOGLE;
         request.get(googleUrl, (error, response, body) => {
-            if (error){
+            if (error) {
                 return next(error);
-            } else{
+            } else {
                 res.send(body);
             }
-        })
-        //response.send("Accueil");
+        });
+        // response.send("Accueil");
     }
 }

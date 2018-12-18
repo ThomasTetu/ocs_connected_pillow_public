@@ -2,7 +2,7 @@
  * Vendor imports
  */
 import * as express from "express";
-import { HomeController } from "./controller/home.controller";
+import {HomeController} from "./controller/home.controller";
 import {TutuController} from "./controller/tutu.controller";
 
 /**

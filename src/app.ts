@@ -3,15 +3,15 @@
  */
 import * as express from "express";
 import * as Container from "plus.container";
-import { json, urlencoded } from "body-parser";
+import {json, urlencoded} from "body-parser";
 
 /**
  * Technicals imports
  */
-import { Router } from "./router";
-import { ConfigurationLoader } from "./configuration-loader";
-import { HeaderMiddleware } from "./middleware/header.middleware";
-import { ContainerService } from "./service/utils/container.service";
+import {Router} from "./router";
+import {ConfigurationLoader} from "./configuration-loader";
+import {HeaderMiddleware} from "./middleware/header.middleware";
+import {ContainerService} from "./service/utils/container.service";
 
 /**
  * Application

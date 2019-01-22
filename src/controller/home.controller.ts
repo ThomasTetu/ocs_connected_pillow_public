@@ -22,14 +22,14 @@ export class HomeController {
         // On récupère la configuration de l'application depuis le container
         const configuration: any = container.get("configuration");
         // On récupère l'URL de google
-        const googleUrl = configuration.URL_GOOGLE;
+        /*const googleUrl = configuration.URL_GOOGLE;
         request.get(googleUrl, (error, response, body) => {
             if (error) {
                 return next(error);
             } else {
                 res.send(body);
             }
-        });
-        // response.send("Accueil");
+        });*/
+        res.send("Accueil");
     }
 }

@@ -25,6 +25,7 @@ app.use(urlencoded({
     extended: true,
 }));
 
+app.set("view engine", "ejs");
 
 /**
  * Récupération de la variable environnement depuis NODE_ENV

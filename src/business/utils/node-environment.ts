@@ -1,4 +1,5 @@
 export enum NodeEnvironment {
-    DEV = "DEV",
-    PROD = "PROD"
+    DEV = "development",
+    DEV_WINDOWS = "development_windows",
+    PROD = "production"
 }

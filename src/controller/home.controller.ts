@@ -2,7 +2,7 @@
  * Vendor imports
  */
 import * as express from "express";
-import * as request from "request";
+import * as path from "path";
 import * as Container from "plus.container";
 
 /**
@@ -21,15 +21,6 @@ export class HomeController {
         const container: Container = req.app.settings.container;
         // On récupère la configuration de l'application depuis le container
         const configuration: any = container.get("configuration");
-        // On récupère l'URL de google
-        /*const googleUrl = configuration.URL_GOOGLE;
-        request.get(googleUrl, (error, response, body) => {
-            if (error) {
-                return next(error);
-            } else {
-                res.send(body);
-            }
-        });*/
-        res.send("Accueil");
+        res.render(__dirname + "/../tpl/index");
     }
 }

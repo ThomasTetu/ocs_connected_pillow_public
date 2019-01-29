@@ -6,4 +6,5 @@ export const prodConfig: Object = {
         "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
     },
+    URL_RASP: "http://192.168.1.141:1880"
 };

@@ -18,71 +18,31 @@
         });
 
         $.get(url + "/humidity", (response) => {
-            const temperatureElement = document.getElementById("humidity");
-            temperatureElement.innerText = response.humidity;
+            const element = document.getElementById("humidity");
+            element.innerText = response.humidity;
         });
 
-        $.get(url + "/humidity", (response) => {
-            const temperatureElement = document.getElementById("humidity");
-            temperatureElement.innerText = response.humidity;
+        $.get(url + "/loudness", (response) => {
+            const temperatureElement = document.getElementById("loudness");
+            temperatureElement.innerText = response.loudness;
         });
 
         function mute() {
-            $.ajax({
-                type:"POST",
-                url: url + "/mute",
-                contentType: "",
-                success: () => {
-                    document.getElementById("mute").innerText = "Il n'y a pas de son";
-                },
-                error: (error) => {
-                    console.log("error");
-                    console.log(error);
-                }
-            });
+            $.post(url + "/mute");
+            document.getElementById("mute").innerText = "Il n'y a pas de son";
         }
 
         function unmute() {
-            $.ajax({
-                type:"POST",
-                url: url + "/unmute",
-                contentType: "",
-                success: () => {
-                    document.getElementById("mute").innerText = "Il y a du son";
-                },
-                error: () => {
-
-                }
-            });
+            $.post(url + "/unmute");
+            document.getElementById("mute").innerText = "Il y a du son";
         }
 
         function volumeUp() {
-            $.ajax({
-                type:"POST",
-                url: "http://192.168.1.141:1880/volume_up",
-                contentType: "",
-                success: () => {
-                    document.getElementById("volumeUpButton").innerText = "Plus de son";
-                },
-                error: (error) => {
-                    console.log("error");
-                    console.log(error);
-                }
-            });
+            $.post(url + "/volume_up");
         }
 
         function volumeDown() {
-            $.ajax({
-                type:"POST",
-                url: "http://192.168.1.141:1880/volume_down",
-                contentType: "",
-                success: () => {
-                    document.getElementById("volumeDownButton").innerText = "Moins de son";
-                },
-                error: () => {
-
-                }
-            });
+            $.post(url + "/volume_down");
         }
 
 
@@ -104,6 +64,11 @@
             <th scope="row">Humidité</th>
             <td id="humidity"></td>
         </tr>
+        <tr>
+            <th scope="row">Loudness</th>
+            <td id="loudness"></td>
+        </tr>
+
         </tbody>
     </table>
 

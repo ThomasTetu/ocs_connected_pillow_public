@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notre super oreiller</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <script type="text/javascript">
+        $.get("http://192.168.1.141:1880/temperature", (response) => {
+            const temperatureElement = document.getElementById("temperature");
+            temperatureElement.innerText = "Température : " + response.temperature;
+        });
+
+        $.post("", (response) => {
+            console.log(response);
+        });
+
+        function mute() {
+            // $.aj
+        }
+    </script>
+
+</head>
+<body>
+
+<span id="temperature"></span>
+<button onclick="mute()">Mute</button>
+</body>
+</html>

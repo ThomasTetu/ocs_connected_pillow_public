@@ -9,8 +9,8 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "copyconfig": "cpx \"src/**/*.{json,yaml,yml,js,html,css,ejs,jpg,jpeg,png}\" dist",
-    "dev": "npm run copyconfig & concurrently \"npm run tsc:watch\" \"nodemon --config ./src/config/nodemon/dev.nodemon.json dist/app.js -e js,yaml,json\"",
-    "dev:windows": "npm run copyconfig & concurrently \"npm run tsc:watch\" \"nodemon --config ./src/config/nodemon/dev.windows.nodemon.json dist/app.js -e js,yaml,json\"",
+    "dev": "npm run copyconfig & concurrently \"npm run tsc:watch\" \"nodemon --config ./src/config/nodemon/dev.nodemon.json dist/app.js -e js,yaml,json,ejs\"",
+    "dev:windows": "npm run copyconfig & concurrently \"npm run tsc:watch\" \"nodemon --config ./src/config/nodemon/dev.windows.nodemon.json dist/app.js -e js,yaml,json,ejs\"",
     "build": "npm run copyconfig & concurrently \"npm run tsc:build\"",
     "start": "export NODE_ENV=production && node dist/app.js",
     "start:windows": "set NODE_ENV=development_windows&& node dist/app.js",

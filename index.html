@@ -6,10 +6,12 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
     <script type="text/javascript">
         $.get("http://192.168.1.141:1880/temperature", (response) => {
             const temperatureElement = document.getElementById("temperature");
-            temperatureElement.innerText = "Température : " + response.temperature;
+            temperatureElement.innerText = response.temperature;
         });
 
         function mute() {
@@ -45,9 +47,20 @@
 </head>
 <body>
 
-<div id="temperature"></div>
-<button id="muteButton" onclick="mute()">mute</button>
-<button id="unmuteButton" onclick="unmute()">unmute</button>
-<div id="mute"></div>
+<div class="container" style="width: 400px">
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th scope="row">Température</th>
+            <td id="temperature">Mark</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button id="muteButton" class="btn btn-danger" onclick="mute()">mute</button>
+    <button id="unmuteButton" class="btn btn-success" onclick="unmute()">unmute</button>
+    <div id="mute"></div>
+</div>
 </body>
 </html>

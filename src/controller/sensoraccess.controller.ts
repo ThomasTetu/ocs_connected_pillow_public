@@ -8,8 +8,10 @@ export class SensorAccessController {
     * TODO: set access routes as constants
      */
 
+    private ip = "http://192.168.1.141:1880";
+
     public getAccelerometerData(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        const accelerometerUrl = "http://bibi.local:1880/accelerometer";
+        const accelerometerUrl = this.ip + "/accelerometer";
         request.get(accelerometerUrl, (error, response, body) => {
             if (error) {
                 return next(error);
@@ -21,7 +23,7 @@ export class SensorAccessController {
     }
 
     public getLoudnessData(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        const loudnessUrl = "http://bibi.local:1880/loudness";
+        const loudnessUrl =  this.ip + "/loudness";
         request.get(loudnessUrl , (error, response, body) => {
             if (error) {
                 return next(error);
@@ -33,7 +35,7 @@ export class SensorAccessController {
     }
 
     public getTemperatureData(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        const temperatureUrl = "http://bibi.local:1880/temperature";
+        const temperatureUrl =  this.ip + "/temperature";
         request.get(temperatureUrl, (error, response, body) => {
             if (error) {
                 return next(error);
@@ -45,7 +47,7 @@ export class SensorAccessController {
     }
 
     public getHumidityData(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        const humidityUrl = "http://bibi.local:1880/humidity";
+        const humidityUrl =  this.ip + "/humidity";
         request.get(humidityUrl, (error, response, body) => {
             if (error) {
                 return next(error);

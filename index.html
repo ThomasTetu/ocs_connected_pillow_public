@@ -9,15 +9,28 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <script type="text/javascript">
-        $.get("http://192.168.1.141:1880/temperature", (response) => {
+
+        const url = "http://192.168.1.141:1880";
+
+        $.get(url + "/temperature", (response) => {
             const temperatureElement = document.getElementById("temperature");
             temperatureElement.innerText = response.temperature;
+        });
+
+        $.get(url + "/humidity", (response) => {
+            const temperatureElement = document.getElementById("humidity");
+            temperatureElement.innerText = response.humidity;
+        });
+
+        $.get(url + "/humidity", (response) => {
+            const temperatureElement = document.getElementById("humidity");
+            temperatureElement.innerText = response.humidity;
         });
 
         function mute() {
             $.ajax({
                 type:"POST",
-                url: "http://192.168.1.141:1880/mute",
+                url: url + "/mute",
                 contentType: "",
                 success: () => {
                     document.getElementById("mute").innerText = "Il n'y a pas de son";
@@ -32,7 +45,7 @@
         function unmute() {
             $.ajax({
                 type:"POST",
-                url: "http://192.168.1.141:1880/unmute",
+                url: url + "/unmute",
                 contentType: "",
                 success: () => {
                     document.getElementById("mute").innerText = "Il y a du son";
@@ -53,7 +66,11 @@
         <tbody>
         <tr>
             <th scope="row">Température</th>
-            <td id="temperature">Mark</td>
+            <td id="temperature"></td>
+        </tr>
+        <tr>
+            <th scope="row">Humidité</th>
+            <td id="humidity"></td>
         </tr>
         </tbody>
     </table>

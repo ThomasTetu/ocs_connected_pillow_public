@@ -40,6 +40,37 @@
                 }
             });
         }
+
+        function volumeUp() {
+            $.ajax({
+                type:"POST",
+                url: "http://192.168.1.141:1880/volume_up",
+                contentType: "",
+                success: () => {
+                    document.getElementById("volumeUpButton").innerText = "Plus de son";
+                },
+                error: (error) => {
+                    console.log("error");
+                    console.log(error);
+                }
+            });
+        }
+
+        function volumeDown() {
+            $.ajax({
+                type:"POST",
+                url: "http://192.168.1.141:1880/volume_down",
+                contentType: "",
+                success: () => {
+                    document.getElementById("volumeDownButton").innerText = "Moins de son";
+                },
+                error: () => {
+
+                }
+            });
+        }
+
+
     </script>
 
 </head>
@@ -48,6 +79,9 @@
 <div id="temperature"></div>
 <button id="muteButton" onclick="mute()">mute</button>
 <button id="unmuteButton" onclick="unmute()">unmute</button>
+<button id="volumeDownButton" onclick="volumeDown()">-</button>
+<button id="volumeUpButton" onclick="volumeUp()">+</button>
+
 <div id="mute"></div>
 </body>
 </html>

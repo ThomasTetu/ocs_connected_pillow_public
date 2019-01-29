@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8"/>
     <title>Notre super oreiller</title>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -11,19 +12,42 @@
             temperatureElement.innerText = "Température : " + response.temperature;
         });
 
-        $.post("", (response) => {
-            console.log(response);
-        });
-
         function mute() {
-            // $.aj
+            $.ajax({
+                type:"POST",
+                url: "http://192.168.1.141:1880/mute",
+                contentType: "",
+                success: () => {
+                    document.getElementById("mute").innerText = "Il n'y a pas de son";
+                },
+                error: (error) => {
+                    console.log("error");
+                    console.log(error);
+                }
+            });
+        }
+
+        function unmute() {
+            $.ajax({
+                type:"POST",
+                url: "http://192.168.1.141:1880/unmute",
+                contentType: "",
+                success: () => {
+                    document.getElementById("mute").innerText = "Il y a du son";
+                },
+                error: () => {
+
+                }
+            });
         }
     </script>
 
 </head>
 <body>
 
-<span id="temperature"></span>
-<button onclick="mute()">Mute</button>
+<div id="temperature"></div>
+<button id="muteButton" onclick="mute()">mute</button>
+<button id="unmuteButton" onclick="unmute()">unmute</button>
+<div id="mute"></div>
 </body>
 </html>

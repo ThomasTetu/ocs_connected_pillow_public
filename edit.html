@@ -63,11 +63,34 @@
 <div class="container">
 
     <h1>Interface coussin connecté</h1>
+
     <ul>
         <li><a href="./index.html">Accueil</a></li>
         <li><a href="./edit.html">Edit</a></li>
         <li><a href="./dashboard.html">Dashboard</a></li>
     </ul>
+
+    <h2>Son</h2>
+    <button id="muteButton" class="btn btn-danger" onclick="mute()">mute</button>
+    <button id="unmuteButton" class="btn btn-success" onclick="unmute()">unmute</button>
+
+    <button id="volumeDownButton" onclick="volumeDown()">-</button>
+    <button id="volumeUpButton" onclick="volumeUp()">+</button>
+    <div id="mute"></div>
+
+
+    <div class="form-group row">
+        <label for="chaine" class="col-sm-3 col-form-label">Sélectionnez une chaine</label>
+        <div class="col-sm-6">
+            <select class="form-control" id="chaine">
+                <option value="http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios">Nostalgie</option>
+                <option value="http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios">Rire et chanson</option>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <button class="btn btn-primary" onclick="sendChannel()">Valider</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

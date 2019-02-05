@@ -46,6 +46,21 @@
         }
 
 
+      /*  function buzzerActivation() {
+            if ((document.getElementById("buzz")).checked) {
+                // turn toggle switch off
+                $("#buzz").attr("checked", false);
+                $('#activate').click();
+                console.log("on");
+            } else {
+                // turn toggle switch off
+                $('#buzz').attr("checked", true);
+                $('#activate').click();
+                console.log("off");
+            }
+        }*/
+
+
     </script>
 
 </head>
@@ -74,12 +89,16 @@
 
     <button id="muteButton" class="btn btn-danger" onclick="mute()">mute</button>
     <button id="unmuteButton" class="btn btn-success" onclick="unmute()">unmute</button>
-
     <div id="mute"></div>
-</div>
-<div class="container2" style="width: 400px">
-    <button id="volumeDownButton" class="btn btn-info" onclick="volumeDown()">-</button>
-    <button id="volumeUpButton" class="btn btn-info" onclick="volumeUp()">+</button>
+    <br>
+    <br>
+    <button id="volumeDownButton" class="btn btn-info" onclick="volumeDown()" style="width:50px;height:50px;">-</button>
+    <button id="volumeUpButton" class="btn btn-info" onclick="volumeUp()" style="width:50px;height:50px;">+</button>
+
+    <br>
+    <!-- Rectangular switch -->
+ <!--   <input id="buzz" type="checkbox" onclick="buzzerActivation()"> -->
+
 </div>
 </body>
 </html>

@@ -101,15 +101,13 @@
 
     $.get(url + "/volume", (response) => {
         addDataToChart(chart, "Son", response.volume);
-        if (response.volume === true)  {
+        if (response.muted === true)  {
             $("#muteButton").prop("disabled", response.volume);
             $("#unmuteButton").prop("disabled", !response.volume);
         } else {
             $("#muteButton").prop("disabled", !response.volume);
             $("#unmuteButton").prop("disabled", response.volume);
         }
-
-        console.log(response.volume);
 
         switch (response.volume) {
             case "0":
@@ -140,7 +138,6 @@
 
     function unmute() {
         $.post(url + "/unmute", (response) => {
-            // document.getElementById("mute").innerText = "Il y a du son";
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
             $("#muteButton").prop("disabled", false);
@@ -150,7 +147,6 @@
 
     function volumeUp() {
         $.post(url + "/volume_up", (response) => {
-            console.log("up", response);
             if (response.volume === "100") {
                 $("#volumeUpButton").prop("disabled", true);
                 $("#volumeDownButton").prop("disabled", false);
@@ -165,7 +161,6 @@
 
     function volumeDown() {
         $.post(url + "/volume_down", (response) => {
-            console.log("down", response);
             if (response.volume === "0") {
                 $("#volumeDownButton").prop("disabled", true);
                 $("#volumeUpButton").prop("disabled", false);
@@ -180,7 +175,6 @@
 
     function sendChannel() {
         const chaine = $("#chaines option:selected").val();
-        console.log(chaine)
         $.post(url + "/play_stream", {
             url: chaine
         }, (response) => {

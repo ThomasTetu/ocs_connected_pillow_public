@@ -108,6 +108,23 @@
             $("#muteButton").prop("disabled", !response.volume);
             $("#unmuteButton").prop("disabled", response.volume);
         }
+
+        console.log(response.volume);
+
+        switch (response.volume) {
+            case "0":
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", true);
+                break;
+            case "100":
+                $("#volumeUpButton").prop("disabled", true);
+                $("#volumeDownButton").prop("disabled", false);
+                break;
+            default:
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", false);
+                break;
+        }
     });
 
 
@@ -133,10 +150,13 @@
 
     function volumeUp() {
         $.post(url + "/volume_up", (response) => {
-            if (response.volume === 100) {
+            console.log("up", response);
+            if (response.volume === "100") {
                 $("#volumeUpButton").prop("disabled", true);
+                $("#volumeDownButton").prop("disabled", false);
             } else {
                 $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", false);
             }
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
@@ -145,10 +165,13 @@
 
     function volumeDown() {
         $.post(url + "/volume_down", (response) => {
-            if (response.volume === 0) {
+            console.log("down", response);
+            if (response.volume === "0") {
                 $("#volumeDownButton").prop("disabled", true);
+                $("#volumeUpButton").prop("disabled", false);
             } else {
-                $("#volumeDownButton").prop("disabled", true);
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", false);
             }
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
@@ -156,7 +179,7 @@
     }
 
     function sendChannel() {
-        const chaine = $("#chaine option:selected").val();
+        const chaine = $("#chaines option:selected").val();
         console.log(chaine)
         $.post(url + "/play_stream", {
             url: chaine
@@ -168,7 +191,9 @@
     function setChainesValues() {
         var chaines = {
             "Nostalgie": "http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios",
-            "Rire et chanson": "http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios"
+            "Rire et chanson": "http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios",
+            "France culture": "http://direct.franceculture.fr/live/franceculture-midfi.mp3",
+            "NRJ": "http://cdn.nrjaudio.fm/audio1/fr/30001/mp3_128.mp3?origine=fluxradios",
         };
 
         $.each(chaines, (key, value) => {

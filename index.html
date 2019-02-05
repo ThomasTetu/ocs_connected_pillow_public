@@ -9,50 +9,6 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <script type="text/javascript">
-        const url = "http://192.168.1.141:1880";
-        $.get(url + "/temperature", (response) => {
-            const temperatureElement = document.getElementById("temperature");
-            temperatureElement.innerText = response.temperature;
-        });
-
-        $.get(url + "/humidity", (response) => {
-            const element = document.getElementById("humidity");
-            element.innerText = response.humidity;
-        });
-
-        $.get(url + "/loudness", (response) => {
-            const element = document.getElementById("loudness");
-            element.innerText = response.loudness;
-        });
-
-        $.get(url + "/accelerometer", (response) => {
-            const element = document.getElementById("accelerometer");
-            element.innerText = "x : " + response.x + " | y : " + response.y + " | z : " + response.z;
-        });
-
-        function mute() {
-            $.post(url + "/mute");
-            document.getElementById("mute").innerText = "Il n'y a pas de son";
-        }
-
-        function unmute() {
-            $.post(url + "/unmute");
-            document.getElementById("mute").innerText = "Il y a du son";
-        }
-
-        function volumeUp() {
-            $.post(url + "/volume_up");
-        }
-
-        function volumeDown() {
-            $.post(url + "/volume_down");
-        }
-
-        function sendChannel() {
-            const chaine = $("#chaine option:selected").val();
-            console.log(chaine)
-            $.post(url + "/play_stream?url=" + chaine);
-        }
 
     </script>
 

@@ -1,4 +1,4 @@
-function createChart(ctx) {
+function createChart(ctx, options) {
     return new Chart(ctx, {
         type: 'bar',
         data: {
@@ -17,18 +17,7 @@ function createChart(ctx) {
                 borderWidth: 1
             }]
         },
-        options: {
-            legend: {
-                display: false
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    },
-                }]
-            }
-        }
+        options: options
     });
 }
 

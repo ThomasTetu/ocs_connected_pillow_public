@@ -13,6 +13,7 @@
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
@@ -42,29 +43,30 @@
 </nav>
 
 <div class="container">
-
+<h1>Son</h1>
     <div class="row">
         <div class="col-6">
-            <h2>Son</h2>
-            <button id="muteButton" class="btn btn-danger" onclick="mute()">mute</button>
-            <button id="unmuteButton" class="btn btn-success" onclick="unmute()">unmute</button>
+            <h2>Configuration</h2>
+            <button id="muteButton" class="btn btn-danger" onclick="mute()">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+            <button id="unmuteButton" class="btn btn-success" onclick="unmute()">
+                <i class="fas fa-volume-up"></i>
+            </button>
 
-            <button id="volumeDownButton" onclick="volumeDown()">-</button>
-            <button id="volumeUpButton" onclick="volumeUp()">+</button>
+            <button id="volumeDownButton" class="btn btn-primary" onclick="volumeDown()">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button id="volumeUpButton" class="btn btn-primary" onclick="volumeUp()">
+                <i class="fas fa-plus"></i>
+            </button>
             <div id="mute"></div>
 
 
+            <h2>Changer de chaîne</h2>
             <div class="form-group row">
-                <label for="chaine" class="col-sm-3 col-form-label">Sélectionnez une chaine</label>
-                <div class="col-sm-6">
-                    <select class="form-control" id="chaine">
-                        <option value="http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios">
-                            Nostalgie
-                        </option>
-                        <option value="http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios">Rire et
-                            chanson
-                        </option>
-                    </select>
+                <div class="col-sm-8">
+                    <select class="form-control" id="chaines"></select>
                 </div>
                 <div class="col-sm-2">
                     <button class="btn btn-primary" onclick="sendChannel()">Valider</button>
@@ -72,6 +74,7 @@
             </div>
         </div>
         <div class="col-6">
+            <h2>Volume</h2>
             <canvas id="myChart" width="300" height="200"></canvas>
         </div>
     </div>
@@ -80,31 +83,61 @@
 <script src="./js/createChart.js"></script>
 <script type="text/javascript">
     const url = "http://192.168.1.141:1880";
+    setChainesValues();
     var ctx = document.getElementById("myChart").getContext('2d');
-    var chart = createChart(ctx);
+    var chart = createChart(ctx, {
+        legend: {
+            display: false
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    suggestedMax: 100,
+                    beginAtZero:true
+                },
+            }]
+        }
+    });
+
+    $.get(url + "/volume", (response) => {
+        addDataToChart(chart, "Son", response.volume);
+        if (response.volume === true)  {
+            $("#muteButton").prop("disabled", response.volume);
+            $("#unmuteButton").prop("disabled", !response.volume);
+        } else {
+            $("#muteButton").prop("disabled", !response.volume);
+            $("#unmuteButton").prop("disabled", response.volume);
+        }
+    });
+
 
     function mute() {
         $.post(url + "/mute", (response) => {
-            console.log(response);
-            // document.getElementById("mute").innerText = "Il n'y a pas de son";
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
+            $("#muteButton").prop("disabled", true);
+            $("#unmuteButton").prop("disabled", false);
         });
 
     }
 
     function unmute() {
         $.post(url + "/unmute", (response) => {
-            console.log(response);
             // document.getElementById("mute").innerText = "Il y a du son";
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
+            $("#muteButton").prop("disabled", false);
+            $("#unmuteButton").prop("disabled", true);
         });
     }
 
     function volumeUp() {
         $.post(url + "/volume_up", (response) => {
-            console.log(response);
+            if (response.volume === 100) {
+                $("#volumeUpButton").prop("disabled", true);
+            } else {
+                $("#volumeUpButton").prop("disabled", false);
+            }
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
         });
@@ -112,7 +145,11 @@
 
     function volumeDown() {
         $.post(url + "/volume_down", (response) => {
-            console.log(response);
+            if (response.volume === 0) {
+                $("#volumeDownButton").prop("disabled", true);
+            } else {
+                $("#volumeDownButton").prop("disabled", true);
+            }
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
         });
@@ -121,7 +158,25 @@
     function sendChannel() {
         const chaine = $("#chaine option:selected").val();
         console.log(chaine)
-        $.post(url + "/play_stream?url=" + chaine);
+        $.post(url + "/play_stream", {
+            url: chaine
+        }, (response) => {
+            console.log(response);
+        });
+    }
+
+    function setChainesValues() {
+        var chaines = {
+            "Nostalgie": "http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios",
+            "Rire et chanson": "http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios"
+        };
+
+        $.each(chaines, (key, value) => {
+            $('#chaines')
+                .append($("<option></option>")
+                    .attr("value", value)
+                    .text(key));
+        });
     }
 </script>
 </body>

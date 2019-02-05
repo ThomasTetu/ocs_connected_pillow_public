@@ -58,7 +58,19 @@
     <script type="text/javascript">
         const url = "http://192.168.1.141:1880";
         var ctx = document.getElementById("myChart").getContext('2d');
-        var chart = createChart(ctx);
+        var chart = createChart(ctx, {
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        suggestedMax: 50,
+                        beginAtZero:true
+                    },
+                }]
+            }
+        });
 
 
         $.get(url + "/temperature", (response) => {

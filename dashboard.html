@@ -5,58 +5,41 @@
     <title>Notre super oreiller</title>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <script type="text/javascript">
-        const url = "http://192.168.1.141:1880";
-        $.get(url + "/temperature", (response) => {
-            const temperatureElement = document.getElementById("temperature");
-            temperatureElement.innerText = response.temperature;
-        });
-
-        $.get(url + "/humidity", (response) => {
-            const element = document.getElementById("humidity");
-            element.innerText = response.humidity;
-        });
-
-        $.get(url + "/loudness", (response) => {
-            const element = document.getElementById("loudness");
-            element.innerText = response.loudness;
-        });
-
-        $.get(url + "/accelerometer", (response) => {
-            const element = document.getElementById("accelerometer");
-            element.innerText = "x : " + response.x + " | y : " + response.y + " | z : " + response.z;
-        });
-
-    </script>
-
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Interface Oreiller Connecté</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="./index.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./edit.html">Edit</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="./dashboard.html">Dashboard</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
 <div class="container">
 
-    <h1>Interface coussin connecté</h1>
-
-    <ul>
-        <li><a href="./index.html">Accueil</a></li>
-        <li><a href="./edit.html">Edit</a></li>
-        <li><a href="./dashboard.html">Dashboard</a></li>
-    </ul>
-
-    <h2>Capteurs</h2>
+    <h1>Dashboard</h1>
     <table class="table" style="width: 600px">
         <tbody>
-        <tr>
-            <th scope="row">Température</th>
-            <td id="temperature"></td>
-        </tr>
-        <tr>
-            <th scope="row">Humidité</th>
-            <td id="humidity"></td>
-        </tr>
         <tr>
             <th scope="row">Loudness</th>
             <td id="loudness"></td>
@@ -69,6 +52,75 @@
 
         </tbody>
     </table>
+
+    <canvas id="myChart" width="300" height="200"></canvas>
+
+    <script type="text/javascript">
+        const url = "http://192.168.1.141:1880";
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var chart = createChart(ctx);
+
+
+        $.get(url + "/temperature", (response) => {
+            addDataToChart(chart, "Température en °C", response.temperature)
+        });
+
+        $.get(url + "/humidity", (response) => {
+            addDataToChart(chart, "Humidité en %", response.humidity)
+        });
+
+        $.get(url + "/loudness", (response) => {
+            const element = document.getElementById("loudness");
+            element.innerText = response.loudness;
+        });
+
+        $.get(url + "/accelerometer", (response) => {
+            const element = document.getElementById("accelerometer");
+            element.innerText = "x : " + response.x + " | y : " + response.y + " | z : " + response.z;
+        });
+
+        function createChart(ctx) {
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            },
+                        }]
+                    }
+                }
+            });
+        }
+
+        function addDataToChart(chart, label, data) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            chart.update();
+        }
+    </script>
 </div>
 </body>
 </html>

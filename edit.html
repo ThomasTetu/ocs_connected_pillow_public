@@ -10,23 +10,7 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <script type="text/javascript">
-
         const url = "http://192.168.1.141:1880";
-
-        $.get(url + "/temperature", (response) => {
-            const temperatureElement = document.getElementById("temperature");
-            temperatureElement.innerText = response.temperature;
-        });
-
-        $.get(url + "/humidity", (response) => {
-            const element = document.getElementById("humidity");
-            element.innerText = response.humidity;
-        });
-
-        $.get(url + "/loudness", (response) => {
-            const temperatureElement = document.getElementById("loudness");
-            temperatureElement.innerText = response.loudness;
-        });
 
         function mute() {
             $.post(url + "/mute");
@@ -46,20 +30,11 @@
             $.post(url + "/volume_down");
         }
 
-
-      /*  function buzzerActivation() {
-            if ((document.getElementById("buzz")).checked) {
-                // turn toggle switch off
-                $("#buzz").attr("checked", false);
-                $('#activate').click();
-                console.log("on");
-            } else {
-                // turn toggle switch off
-                $('#buzz').attr("checked", true);
-                $('#activate').click();
-                console.log("off");
-            }
-        }*/
+        function sendChannel() {
+            const chaine = $("#chaine option:selected").val();
+            console.log(chaine)
+            $.post(url + "/play_stream?url=" + chaine);
+        }
 
     </script>
 
@@ -90,18 +65,27 @@
 
 <div class="container">
 
+    <h2>Son</h2>
     <button id="muteButton" class="btn btn-danger" onclick="mute()">mute</button>
     <button id="unmuteButton" class="btn btn-success" onclick="unmute()">unmute</button>
+
+    <button id="volumeDownButton" onclick="volumeDown()">-</button>
+    <button id="volumeUpButton" onclick="volumeUp()">+</button>
     <div id="mute"></div>
-    <br>
-    <br>
-    <button id="volumeDownButton" class="btn btn-info" onclick="volumeDown()" style="width:50px;height:50px;">-</button>
-    <button id="volumeUpButton" class="btn btn-info" onclick="volumeUp()" style="width:50px;height:50px;">+</button>
 
-    <br>
-    <!-- Rectangular switch -->
- <!--   <input id="buzz" type="checkbox" onclick="buzzerActivation()"> -->
 
+    <div class="form-group row">
+        <label for="chaine" class="col-sm-3 col-form-label">Sélectionnez une chaine</label>
+        <div class="col-sm-6">
+            <select class="form-control" id="chaine">
+                <option value="http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios">Nostalgie</option>
+                <option value="http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios">Rire et chanson</option>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <button class="btn btn-primary" onclick="sendChannel()">Valider</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

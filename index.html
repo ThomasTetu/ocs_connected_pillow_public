@@ -29,21 +29,21 @@
         });
 
         function mute() {
-            $.post(url + "/mute");
+            $.post(url + "/play/mute");
             document.getElementById("mute").innerText = "Il n'y a pas de son";
         }
 
         function unmute() {
-            $.post(url + "/unmute");
+            $.post(url + "/play/unmute");
             document.getElementById("mute").innerText = "Il y a du son";
         }
 
         function volumeUp() {
-            $.post(url + "/volume_up");
+            $.post(url + "/play/volume_up");
         }
 
         function volumeDown() {
-            $.post(url + "/volume_down");
+            $.post(url + "/play/volume_down");
         }
 
 

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Notre super oreiller</title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+            integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Interface Oreiller Connecté</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="./index.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./edit.html">Edit</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="./dashboard.html">Dashboard</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+<h1>Son</h1>
+    <div class="row">
+        <div class="col-6">
+            <h2>Configuration</h2>
+            <button id="muteButton" class="btn btn-danger" onclick="mute()">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+            <button id="unmuteButton" class="btn btn-success" onclick="unmute()">
+                <i class="fas fa-volume-up"></i>
+            </button>
+
+            <button id="volumeDownButton" class="btn btn-primary" onclick="volumeDown()">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button id="volumeUpButton" class="btn btn-primary" onclick="volumeUp()">
+                <i class="fas fa-plus"></i>
+            </button>
+            <div id="mute"></div>
+
+
+            <h2>Changer de chaîne</h2>
+            <div class="form-group row">
+                <div class="col-sm-8">
+                    <select class="form-control" id="chaines"></select>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-primary" onclick="sendChannel()">Valider</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <h2>Volume</h2>
+            <canvas id="myChart" width="300" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="./js/createChart.js"></script>
+<script type="text/javascript">
+    const url = "http://192.168.1.141:1880";
+    setChainesValues();
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var chart = createChart(ctx, {
+        legend: {
+            display: false
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    suggestedMax: 100,
+                    beginAtZero:true
+                },
+            }]
+        }
+    });
+
+    $.get(url + "/volume", (response) => {
+        addDataToChart(chart, "Son", response.volume);
+        if (response.muted === true)  {
+            $("#muteButton").prop("disabled", response.volume);
+            $("#unmuteButton").prop("disabled", !response.volume);
+        } else {
+            $("#muteButton").prop("disabled", !response.volume);
+            $("#unmuteButton").prop("disabled", response.volume);
+        }
+
+        switch (response.volume) {
+            case "0":
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", true);
+                break;
+            case "100":
+                $("#volumeUpButton").prop("disabled", true);
+                $("#volumeDownButton").prop("disabled", false);
+                break;
+            default:
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", false);
+                break;
+        }
+    });
+
+
+    function mute() {
+        $.post(url + "/play/mute", (response) => {
+            removeDataToChart(chart);
+            addDataToChart(chart, "Son", response.volume)
+            $("#muteButton").prop("disabled", true);
+            $("#unmuteButton").prop("disabled", false);
+        });
+
+    }
+
+    function unmute() {
+        $.post(url + "/play/unmute", (response) => {
+            removeDataToChart(chart);
+            addDataToChart(chart, "Son", response.volume)
+            $("#muteButton").prop("disabled", false);
+            $("#unmuteButton").prop("disabled", true);
+        });
+    }
+
+    function volumeUp() {
+        $.post(url + "/play/volume_up", (response) => {
+            if (response.volume === "100") {
+                $("#volumeUpButton").prop("disabled", true);
+                $("#volumeDownButton").prop("disabled", false);
+            } else {
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", false);
+            }
+            removeDataToChart(chart);
+            addDataToChart(chart, "Son", response.volume)
+        });
+    }
+
+    function volumeDown() {
+        $.post(url + "/play/volume_down", (response) => {
+            if (response.volume === "0") {
+                $("#volumeDownButton").prop("disabled", true);
+                $("#volumeUpButton").prop("disabled", false);
+            } else {
+                $("#volumeUpButton").prop("disabled", false);
+                $("#volumeDownButton").prop("disabled", false);
+            }
+            removeDataToChart(chart);
+            addDataToChart(chart, "Son", response.volume)
+        });
+    }
+
+    function sendChannel() {
+        const chaine = $("#chaines option:selected").val();
+        $.post(url + "/play/stream", {
+            url: chaine
+        }, (response) => {
+            console.log(response);
+        });
+    }
+
+    function setChainesValues() {
+        var chaines = {
+            "Nostalgie": "http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios",
+            "Rire et chanson": "http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios",
+            "France culture": "http://direct.franceculture.fr/live/franceculture-midfi.mp3",
+            "NRJ": "http://cdn.nrjaudio.fm/audio1/fr/30001/mp3_128.mp3?origine=fluxradios",
+        };
+
+        $.each(chaines, (key, value) => {
+            $('#chaines')
+                .append($("<option></option>")
+                    .attr("value", value)
+                    .text(key));
+        });
+    }
+</script>
+</body>
+</html>

@@ -10,10 +10,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <style>
+        body {
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Interface Oreiller Connecté</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -21,11 +26,8 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="./index.html">Accueil</a>
-            </li>
             <li class="nav-item">
-                <a class="nav-link" href="./edit.html">Edit</a>
+                <a class="nav-link" href="./index.html">Administration de l'oreiller</a>
             </li>
 
             <li class="nav-item">
@@ -38,22 +40,43 @@
 <div class="container">
 
     <h1>Dashboard</h1>
-    <table class="table" style="width: 600px">
-        <tbody>
-        <tr>
-            <th scope="row">Loudness</th>
-            <td id="loudness"></td>
-        </tr>
+    <br />
+    <div class="card">
+        <div class="card-header">
+            Graphique température - humidité
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th scope="row">Niveau sonore</th>
+                    <td id="loudness">Aucune donnée</td>
+                </tr>
 
-        <tr>
-            <th scope="row">Accelerometer</th>
-            <td id="accelerometer"></td>
-        </tr>
+                <tr>
+                    <th scope="row">Accelerometer</th>
+                    <td id="accelerometer">Aucune donnée</td>
+                </tr>
 
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <canvas id="myChart" width="300" height="200"></canvas>
+    <br />
+
+    <div class="card">
+        <div class="card-header">
+            Graphique température - humidité
+        </div>
+        <div class="card-body">
+            <canvas id="myChart" width="300" height="300"></canvas>
+        </div>
+    </div>
+
+    <hr>
+
+
     <script src="./js/createChart.js"></script>
     <script type="text/javascript">
         const url = "http://192.168.1.141:1880";

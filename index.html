@@ -51,6 +51,29 @@
         <div class="col-6">
             <div class="card">
                 <div class="card-header">
+                    Configuration du Wi-Fi
+                </div>
+                <div class="card-body">
+                    <form novalidate>
+                        <div class="form-group">
+                            <label for="ssid">SSID</label>
+                            <input type="email" class="form-control" id="ssid" aria-describedby="ssid" placeholder="SSID">
+                            <small id="ssidHelp" class="form-text text-muted">Entrez le nom du réseau.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input class="form-control" id="password" placeholder="Mot de passe">
+                            <small id="passwordHelp" class="form-text text-muted">Entrez la clé de sécurité du réseau.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); connectToWifi()">Se connecter</button>
+                    </form>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="card">
+                <div class="card-header">
                     Configuration du son
                 </div>
                 <div class="card-body">
@@ -105,9 +128,15 @@
 
 <script src="./js/createChart.js"></script>
 <script type="text/javascript">
-    const url = "http://192.168.1.141:1880";
+    const url = "http://192.168.1.195:1880";
     setChainesValues();
+
     var ctx = document.getElementById("myChart").getContext('2d');
+    const muteButton = "#muteButton";
+    const unmuteButton = "#unmuteButton";
+    const volumeUpButton = "#volumeUpButton";
+    const volumeDownButton = "#volumeDownButton";
+
     var chart = createChart(ctx, {
         legend: {
             display: false
@@ -125,36 +154,48 @@
     $.get(url + "/volume", (response) => {
         addDataToChart(chart, "Son", response.volume);
         if (response.muted === true)  {
-            $("#muteButton").prop("disabled", response.volume);
-            $("#unmuteButton").prop("disabled", !response.volume);
+            $(muteButton).prop("disabled", response.volume);
+            $(unmuteButton).prop("disabled", !response.volume);
         } else {
-            $("#muteButton").prop("disabled", !response.volume);
-            $("#unmuteButton").prop("disabled", response.volume);
+            $(muteButton).prop("disabled", !response.volume);
+            $(unmuteButton).prop("disabled", response.volume);
         }
 
         switch (response.volume) {
             case "0":
-                $("#volumeUpButton").prop("disabled", false);
-                $("#volumeDownButton").prop("disabled", true);
+                $(volumeUpButton).prop("disabled", false);
+                $(volumeDownButton).prop("disabled", true);
                 break;
             case "100":
-                $("#volumeUpButton").prop("disabled", true);
-                $("#volumeDownButton").prop("disabled", false);
+                $(volumeUpButton).prop("disabled", true);
+                $(volumeDownButton).prop("disabled", false);
                 break;
             default:
-                $("#volumeUpButton").prop("disabled", false);
-                $("#volumeDownButton").prop("disabled", false);
+                $(volumeUpButton).prop("disabled", false);
+                $(volumeDownButton).prop("disabled", false);
                 break;
         }
     });
+
+    function connectToWifi() {
+        const ssid = document.getElementById("ssid").value;
+        const password = document.getElementById("password").value;
+
+        $.post(url + "/wifi", {
+            ssid: ssid,
+            password: password
+        }, (response) => {
+
+        })
+    }
 
 
     function mute() {
         $.post(url + "/mute", (response) => {
             removeDataToChart(chart);
-            addDataToChart(chart, "Son", response.volume)
-            $("#muteButton").prop("disabled", true);
-            $("#unmuteButton").prop("disabled", false);
+            addDataToChart(chart, "Son", response.volume);
+            $(muteButton).prop("disabled", true);
+            $(unmuteButton).prop("disabled", false);
         });
 
     }
@@ -163,19 +204,19 @@
         $.post(url + "/unmute", (response) => {
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
-            $("#muteButton").prop("disabled", false);
-            $("#unmuteButton").prop("disabled", true);
+            $(muteButton).prop("disabled", false);
+            $(unmuteButton).prop("disabled", true);
         });
     }
 
     function volumeUp() {
         $.post(url + "/volume_up", (response) => {
             if (response.volume === "100") {
-                $("#volumeUpButton").prop("disabled", true);
-                $("#volumeDownButton").prop("disabled", false);
+                $(volumeUpButton).prop("disabled", true);
+                $(volumeDownButton).prop("disabled", false);
             } else {
-                $("#volumeUpButton").prop("disabled", false);
-                $("#volumeDownButton").prop("disabled", false);
+                $(volumeUpButton).prop("disabled", false);
+                $(volumeDownButton).prop("disabled", false);
             }
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
@@ -185,11 +226,11 @@
     function volumeDown() {
         $.post(url + "/volume_down", (response) => {
             if (response.volume === "0") {
-                $("#volumeDownButton").prop("disabled", true);
-                $("#volumeUpButton").prop("disabled", false);
+                $(volumeDownButton).prop("disabled", true);
+                $(volumeUpButton).prop("disabled", false);
             } else {
-                $("#volumeUpButton").prop("disabled", false);
-                $("#volumeDownButton").prop("disabled", false);
+                $(volumeUpButton).prop("disabled", false);
+                $(volumeDownButton).prop("disabled", false);
             }
             removeDataToChart(chart);
             addDataToChart(chart, "Son", response.volume)
@@ -206,7 +247,7 @@
     }
 
     function setChainesValues() {
-        var chaines = {
+        const chaines = {
             "Nostalgie": "http://cdn.nrjaudio.fm/audio1/fr/30601/mp3_128.mp3?origine=fluxradios",
             "Rire et chanson": "http://cdn.nrjaudio.fm/audio1/fr/30401/mp3_128.mp3?origine=fluxradios",
             "France culture": "http://direct.franceculture.fr/live/franceculture-midfi.mp3",

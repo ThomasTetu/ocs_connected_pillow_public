@@ -1299,7 +1299,7 @@
         "func": "var loud = flow.get('loud')||0;\nvar current = msg.payload * 114 / 1023 - 48;\nflow.set('loud',current);\nvar thresh = (flow.get('loudThreshold') / 100);\nif (current * (1 + thresh) > loud || current * (1 - thresh) < loud){\n    msg.payload = {loudness: current};\n    return msg\n}\n",
         "outputs": 1,
         "noerr": 0,
-        "x": 320,
+        "x": 310,
         "y": 200,
         "wires": [
             [
@@ -1814,7 +1814,7 @@
         "type": "function",
         "z": "b7153556.38f63",
         "name": "Get threshold",
-        "func": "msg.payload = flow.get('loudThreshold');\nreturn msg;",
+        "func": "msg.payload = {\"loudthreshold\":flow.get('loudThreshold')};\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 380,
@@ -2227,6 +2227,40 @@
         "wires": [
             [],
             [],
+            []
+        ]
+    },
+    {
+        "id": "c3a517b7.a28cc",
+        "type": "inject",
+        "z": "b7153556.38f63",
+        "name": "",
+        "topic": "",
+        "payload": "Started!",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "x": 440,
+        "y": 20,
+        "wires": [
+            [
+                "e73cc576.ee66c8"
+            ]
+        ]
+    },
+    {
+        "id": "e73cc576.ee66c8",
+        "type": "function",
+        "z": "b7153556.38f63",
+        "name": "init loud threshold",
+        "func": "flow.set('loudThreshold',10);\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 650,
+        "y": 20,
+        "wires": [
             []
         ]
     },

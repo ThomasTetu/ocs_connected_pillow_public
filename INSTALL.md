@@ -30,7 +30,8 @@ $ systemctl status nodered
 Il faut maintenant installer les modules Node-RED nécessaires. Se connecter à bibi.local:1880 sur son explorateur internet pour accéder aux flows Node-RED. Menu en haut à droite, Manage Palette, puis installer les modules suivants :
  * [node-red-contrib-i2c](https://flows.nodered.org/node/node-red-contrib-i2c)
  * [node-red-contrib-grovepi](https://flows.nodered.org/node/node-red-contrib-grovepi)
- Ensuite, pour importer le flow, le fichier est présent sur le dépôt, dans le dossier node-red. Ouvrir le fichier flow.json à l'aide d'un éditeur de texte, copier la sauvegarde, puis Export dans le menu Node-RED, Clipboard, et coller le flow.
+
+Ensuite, pour importer le flow, le fichier est présent sur le dépôt, dans le dossier node-red. Ouvrir le fichier flow.json à l'aide d'un éditeur de texte, copier la sauvegarde, puis Export dans le menu Node-RED, Clipboard, et coller le flow.
 
 Vous pouvez vérifier que Mosquitto est correctement installé et qu'il se lance automatiquement au démarrage de l'oreiller avec la commande suivante. 
 ```

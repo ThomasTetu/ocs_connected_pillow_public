@@ -72,6 +72,10 @@
                         <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); connectToWifi()">
                             Se connecter
                         </button>
+                        
+                         <button type="submit" class="btn btn-warning" onclick="event.preventDefault(); resetNetworks()">
+                            Réinitialiser les réseaux
+                        </button>
                     </form>
                 </div>
             </div>
@@ -194,12 +198,16 @@
         const ssid = document.getElementById("ssid").value;
         const psk = document.getElementById("psk").value;
 
-        $.post(url + "/wifi", {
+        $.post(url + "/wifi/add", {
             ssid: ssid,
             psk: psk
         }, (response) => {
 
         })
+    }
+    
+    function resetNetworks() {
+        $.post(url + "/wifi/reset")
     }
 
 

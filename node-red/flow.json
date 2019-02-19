@@ -1,1 +1,2257 @@
-[{"id":"957f8ad1.6a417","type":"tab","label":"SmartPillow","disabled":false,"info":""},{"id":"f2d281da.2bbaf8","type":"i2c in","z":"957f8ad1.6a417","name":"I2C1","address":"83","command":"50","count":"6","x":270,"y":60,"wires":[["364d3bdd.7a62e4","aa720f4f.b21ee"]]},{"id":"1ab4d075.23f088","type":"inject","z":"957f8ad1.6a417","name":"Accelerometer","topic":"","payload":"/dev/i2c-1","payloadType":"str","repeat":"0.1","crontab":"","once":true,"onceDelay":"1","x":120,"y":60,"wires":[["f2d281da.2bbaf8"]]},{"id":"364d3bdd.7a62e4","type":"function","z":"957f8ad1.6a417","name":"publishSocketMessages","func":"// TODO: Only publish when data changes ?\n\nlet gForce = 9.80665;\n\nlet x = (msg.payload[1] * 256) + msg.payload[0];\nif (msg.payload[1] > 128)\n    x = 65535 - x;\nx = Math.round(x * 4 * gForce)/1000;\n\nlet y = (msg.payload[3] * 256) + msg.payload[2];\nif (msg.payload[3] > 128)\n    y = 65535 - y;\ny = Math.round(y * 4 * gForce)/1000;\n\nlet z = (msg.payload[5] * 256) + msg.payload[4];\nif (msg.payload[5] > 128)\n    z = 65535 - z;\nz = Math.round(z * 4 * gForce)/1000;\n\n\nmsg.payload = {x: x, y: y, z: z};\n\nreturn msg;","outputs":1,"noerr":0,"x":450,"y":60,"wires":[["abcf3561.fd656"]]},{"id":"540a3e46.6d12e","type":"grove analog sensor","z":"957f8ad1.6a417","name":"Loudness","pin":"2","sensor":"sound","repeat":"0.1","board":"78a75072.fedf68","x":80,"y":240,"wires":[["ae50b6f4.d31ce8","50bcf270.c7de64","5a73559c.716a7c"]]},{"id":"6c8bf835.ee368","type":"i2c out","z":"957f8ad1.6a417","name":"","address":"83","command":"45","payload":"8","payloadType":"num","count":"1","x":260,"y":20,"wires":[]},{"id":"f5309446.6b1d4","type":"inject","z":"957f8ad1.6a417","name":"","topic":"","payload":"/dev/i2c-1","payloadType":"str","repeat":"","crontab":"","once":true,"onceDelay":"0.1","x":110,"y":20,"wires":[["6c8bf835.ee368"]]},{"id":"5cd1c2fe.156aec","type":"http in","z":"957f8ad1.6a417","name":"","url":"/accelerometer","method":"get","upload":false,"swaggerDoc":"","x":110,"y":140,"wires":[["88dede69.dbf3c8"]]},{"id":"88dede69.dbf3c8","type":"function","z":"957f8ad1.6a417","name":"GetRequest","func":"msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;","outputs":1,"noerr":0,"x":290,"y":140,"wires":[["c239e8f7.539a38"]]},{"id":"aa720f4f.b21ee","type":"function","z":"957f8ad1.6a417","name":"JsonDisplayAccelerometer","func":"var b1 = msg.payload[0];\nvar b2 = msg.payload[1];\nvar b3 = msg.payload[2];\nvar b4 = msg.payload[3];\nvar b5 = msg.payload[4];\nvar b6 = msg.payload[5];\n\nvar gForce = 9.80665;\n\nvar x = (b2 * 256) + b1;\nif (b2 > 128)\n    x = 65535 - x;\nvar y = (b4 * 256) + b3;\nif (b4 > 128)\n    y = 65535 - y;\nvar z = (b6 * 256) + b5;\nif (b6 > 128)\n    z = 65535 - z;\n\nx = Math.round(x * 4 * gForce)/1000;\ny = Math.round(y * 4 * gForce)/1000;\nz = Math.round(z * 4 * gForce)/1000;\n\nmsg.payload = {x: x, y: y, z: z};\nmsg.parts = 1;\nmsg.topic = \"1\";\n\nreturn msg;","outputs":1,"noerr":0,"x":460,"y":100,"wires":[["f3878b01.de3d5"]]},{"id":"d63a62c2.0778a8","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"object","property":"","propertyType":"full","key":"topic","joiner":"\\n","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":770,"y":120,"wires":[["fc2caffa.30f578"]]},{"id":"f3878b01.de3d5","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":650,"y":100,"wires":[["d63a62c2.0778a8"]]},{"id":"c239e8f7.539a38","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":650,"y":140,"wires":[["d63a62c2.0778a8"]]},{"id":"4978b9bb.2cc5b","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":1020,"y":120,"wires":[]},{"id":"fc2caffa.30f578","type":"function","z":"957f8ad1.6a417","name":"","func":"msg.payload = msg.payload[1].payload;\nreturn msg;","outputs":1,"noerr":0,"x":890,"y":120,"wires":[["4978b9bb.2cc5b"]]},{"id":"e1836073.14d92","type":"http in","z":"957f8ad1.6a417","name":"","url":"/loudness","method":"get","upload":false,"swaggerDoc":"","x":100,"y":320,"wires":[["e8fa3b87.9a5228"]]},{"id":"e8fa3b87.9a5228","type":"function","z":"957f8ad1.6a417","name":"GetRequest","func":"msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;","outputs":1,"noerr":0,"x":270,"y":320,"wires":[["eec83f7d.5ce768"]]},{"id":"3f26348f.33423c","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"object","property":"","propertyType":"full","key":"topic","joiner":"\\n","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":550,"y":300,"wires":[["7fae23c8.2cc41c"]]},{"id":"95406369.7865c8","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":430,"y":280,"wires":[["3f26348f.33423c"]]},{"id":"eec83f7d.5ce768","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":430,"y":320,"wires":[["3f26348f.33423c"]]},{"id":"2b9d6349.c921e4","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":800,"y":300,"wires":[]},{"id":"7fae23c8.2cc41c","type":"function","z":"957f8ad1.6a417","name":"","func":"msg.payload = msg.payload[1].payload;\nreturn msg;","outputs":1,"noerr":0,"x":670,"y":300,"wires":[["2b9d6349.c921e4"]]},{"id":"ae50b6f4.d31ce8","type":"function","z":"957f8ad1.6a417","name":"JsonDisplayLoudness","func":"msg.payload = {loudness: msg.payload * 114 / 1023 - 48};\nmsg.parts = 1;\nmsg.topic = \"1\";\nreturn msg;","outputs":1,"noerr":0,"x":260,"y":280,"wires":[["95406369.7865c8"]]},{"id":"50bcf270.c7de64","type":"function","z":"957f8ad1.6a417","name":"publishSocketMessages","func":"msg.payload = {loudness: msg.payload * 114 / 1023 - 48};\nreturn msg;\n","outputs":1,"noerr":0,"x":270,"y":240,"wires":[["6f66049d.bc99c4"]]},{"id":"ae613d8.440bcc","type":"grove digital sensor","z":"957f8ad1.6a417","name":"T/H","board":"4ad1dd1c.23a9cc","sensor":"dht22","repeat":"1","pin":"3","x":70,"y":440,"wires":[["7c2d4890.78977","137bb99c.8f668e"]]},{"id":"73aa0563.19c0b4","type":"http in","z":"957f8ad1.6a417","name":"","url":"/temperature","method":"get","upload":false,"swaggerDoc":"","x":110,"y":380,"wires":[["94e944c4.6c517"]]},{"id":"83f1a146.069eb8","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":470,"y":420,"wires":[["7c5c8d2f.6819d4"]]},{"id":"60eaaf48.32f398","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json","Access-Control-Allow-Origin":"*","Access-Control-Allow-Methods":"POST, GET, OPTIONS"},"x":840,"y":380,"wires":[]},{"id":"7c2d4890.78977","type":"function","z":"957f8ad1.6a417","name":"JsonTemperature","func":"msg.payload = {temperature: msg.payload.temperature};\nmsg.parts = 1;\nmsg.topic = \"1\";\nreturn msg;","outputs":1,"noerr":0,"x":310,"y":420,"wires":[["83f1a146.069eb8"]]},{"id":"7c5c8d2f.6819d4","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"object","property":"","propertyType":"full","key":"topic","joiner":"\\n","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":590,"y":380,"wires":[["b9ddb0d0.a7f05"]]},{"id":"b9ddb0d0.a7f05","type":"function","z":"957f8ad1.6a417","name":"","func":"msg.payload = msg.payload[1].payload;\nreturn msg;","outputs":1,"noerr":0,"x":710,"y":380,"wires":[["60eaaf48.32f398"]]},{"id":"94e944c4.6c517","type":"function","z":"957f8ad1.6a417","name":"GetRequest","func":"msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;","outputs":1,"noerr":0,"x":290,"y":380,"wires":[["d8d6b3c.3f4a45"]]},{"id":"56254a8a.d40ccc","type":"http in","z":"957f8ad1.6a417","name":"","url":"/humidity","method":"get","upload":false,"swaggerDoc":"","x":100,"y":500,"wires":[["25d75a83.29db06"]]},{"id":"25d75a83.29db06","type":"function","z":"957f8ad1.6a417","name":"GetRequest","func":"msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;","outputs":1,"noerr":0,"x":290,"y":500,"wires":[["b0310826.0266f"]]},{"id":"137bb99c.8f668e","type":"function","z":"957f8ad1.6a417","name":"JsonHumidity","func":"msg.payload = {humidity: msg.payload.humidity};\nmsg.parts = 1;\nmsg.topic = \"1\";\nreturn msg;","outputs":1,"noerr":0,"x":300,"y":460,"wires":[["91745387.4f7398"]]},{"id":"b0310826.0266f","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":470,"y":500,"wires":[["ece8015c.f3e7f"]]},{"id":"ece8015c.f3e7f","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"object","property":"","propertyType":"full","key":"topic","joiner":"\\n","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":590,"y":500,"wires":[["4e6390cd.e3bfc"]]},{"id":"4e6390cd.e3bfc","type":"function","z":"957f8ad1.6a417","name":"","func":"msg.payload = msg.payload[1].payload;\nreturn msg;","outputs":1,"noerr":0,"x":710,"y":500,"wires":[["50ddc469.182f84"]]},{"id":"50ddc469.182f84","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":840,"y":500,"wires":[]},{"id":"bb1518d4.31b4f","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/sound","method":"post","upload":false,"swaggerDoc":"","x":110,"y":580,"wires":[["1daa1ba5.ff11bc"]]},{"id":"1daa1ba5.ff11bc","type":"function","z":"957f8ad1.6a417","name":"Get Video ID","func":"msg.payload = msg.payload.id;\nreturn msg;","outputs":1,"noerr":0,"x":310,"y":580,"wires":[["23e70ed7.609f52","b8c12446.41db98"]]},{"id":"c3fc11c.09f72f","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":660,"y":580,"wires":[]},{"id":"23e70ed7.609f52","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":490,"y":580,"wires":[["c3fc11c.09f72f"]]},{"id":"53e7e809.3ca24","type":"grove digital output","z":"957f8ad1.6a417","name":"Buzz","board":"78a75072.fedf68","pin":"2","x":460,"y":1450,"wires":[]},{"id":"abcf3561.fd656","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":630,"y":60,"wires":[["81811a5a.9b84f"]]},{"id":"81811a5a.9b84f","type":"mqtt out","z":"957f8ad1.6a417","name":"Send Acceleration MQTT Event","topic":"acceleration","qos":"2","retain":"","broker":"914bdd80.272ee","x":830,"y":60,"wires":[]},{"id":"2230763a.c90c02","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/mute","method":"post","upload":false,"swaggerDoc":"","x":100,"y":880,"wires":[["2ffe40dc.dccca","68d97a1d.d575f4"]]},{"id":"2ffe40dc.dccca","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/tune.sh m","addpay":false,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":380,"y":920,"wires":[["7bd90d9e.6f16cc"],[],[]]},{"id":"6f66049d.bc99c4","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":450,"y":240,"wires":[["b1fd0d53.76ff08"]]},{"id":"b1fd0d53.76ff08","type":"mqtt out","z":"957f8ad1.6a417","name":"Send Loudness MQTT Event","topic":"loudness","qos":"2","retain":"","broker":"914bdd80.272ee","x":650,"y":240,"wires":[]},{"id":"52adfeb4.2bec4","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/unmute","method":"post","upload":false,"swaggerDoc":"","x":120,"y":980,"wires":[["d72f6842.d345","ebbba63a.a6b31"]]},{"id":"d72f6842.d345","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/tune.sh um","addpay":false,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":410,"y":1020,"wires":[["4420cfd.03d8ab"],[],[]]},{"id":"e0d44f9c.05f488","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/volume_down","method":"post","upload":false,"swaggerDoc":"","x":120,"y":1140,"wires":[["a7de8c3e.f5d8f8","78b15964.dc6d"]]},{"id":"a7de8c3e.f5d8f8","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/tune.sh dv 10","addpay":false,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":430,"y":1180,"wires":[["3b60784d.497168"],[],[]]},{"id":"791d3141.5b28e","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/volume_up","method":"post","upload":false,"swaggerDoc":"","x":140,"y":1060,"wires":[["b1778f4b.904568","7698dd47.ef473c"]]},{"id":"b1778f4b.904568","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/tune.sh uv 10","addpay":false,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":440,"y":1100,"wires":[["6ca2341c.7964b4"],[],[]]},{"id":"9b12b846.63173","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":1360,"y":1060,"wires":[]},{"id":"859fff71.e284a","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":1190,"y":1060,"wires":[["9b12b846.63173"]]},{"id":"d1a12136.2ff878","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/stream","method":"post","upload":false,"swaggerDoc":"","x":110,"y":680,"wires":[["658ee27f.35dce4"]]},{"id":"b3db91d6.89c94","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/play_stream_sound.sh ","addpay":true,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":640,"y":720,"wires":[[],[],[]]},{"id":"658ee27f.35dce4","type":"function","z":"957f8ad1.6a417","name":"Get Stream URL","func":"msg.payload = msg.payload.url;\nreturn msg;","outputs":1,"noerr":0,"x":320,"y":680,"wires":[["b3db91d6.89c94","79ad32f5.cbf2c4"]]},{"id":"9e403ea1.7a2728","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":680,"y":680,"wires":[]},{"id":"79ad32f5.cbf2c4","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":510,"y":680,"wires":[["9e403ea1.7a2728"]]},{"id":"ace425fc.1c1e3","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/stop","method":"post","upload":false,"swaggerDoc":"","x":110,"y":780,"wires":[["bc7d97f.cf610e8","8ee0790d.b0497"]]},{"id":"8ee0790d.b0497","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/stop_sound.sh ","addpay":true,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":420,"y":820,"wires":[[],[],[]]},{"id":"e0eb7ef8.73658","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":480,"y":780,"wires":[]},{"id":"bc7d97f.cf610e8","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":310,"y":780,"wires":[["e0eb7ef8.73658"]]},{"id":"b8c12446.41db98","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/play_youtube_sound.sh ","addpay":true,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":630,"y":620,"wires":[[],[],[]]},{"id":"ebd72499.edc9f","type":"http in","z":"957f8ad1.6a417","name":"","url":"/buzz","method":"post","upload":false,"swaggerDoc":"","x":100,"y":1390,"wires":[["55bd75f2.66e6ec","6c7ec11e.80b8f8","54f0e4a7.d3e4bc"]]},{"id":"55bd75f2.66e6ec","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":330,"y":1390,"wires":[["bcf8032f.00f72"]]},{"id":"bcf8032f.00f72","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":530,"y":1390,"wires":[]},{"id":"6c7ec11e.80b8f8","type":"function","z":"957f8ad1.6a417","name":"On","func":"msg = { payload : true };\nreturn msg;","outputs":1,"noerr":0,"x":280,"y":1430,"wires":[["53e7e809.3ca24"]]},{"id":"54f0e4a7.d3e4bc","type":"function","z":"957f8ad1.6a417","name":"TimeoutOff","func":"setTimeout(function(){\n    msg = { payload : false };\n    node.send(msg);\n}, 2000);","outputs":1,"noerr":0,"x":300,"y":1470,"wires":[["53e7e809.3ca24"]]},{"id":"7698dd47.ef473c","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"string","property":"payload","propertyType":"msg","key":"topic","joiner":"","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":1020,"y":1060,"wires":[["859fff71.e284a"]]},{"id":"6ca2341c.7964b4","type":"function","z":"957f8ad1.6a417","name":"Parse volume level","func":"let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;","outputs":1,"noerr":0,"x":750,"y":1100,"wires":[["97b7643a.b7b05"]]},{"id":"97b7643a.b7b05","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":910,"y":1100,"wires":[["7698dd47.ef473c"]]},{"id":"5a73559c.716a7c","type":"function","z":"957f8ad1.6a417","name":"publishSocketMessagesWithThreshold","func":"var loud = flow.get('loud')||0;\nvar current = msg.payload * 114 / 1023 - 48;\nflow.set('loud',current);\nvar thresh = (flow.get('loudThreshold') / 100);\nif (current * (1 + thresh) > loud || current * (1 - thresh) < loud){\n    msg.payload = {loudness: current};\n    return msg\n}\n","outputs":1,"noerr":0,"x":310,"y":200,"wires":[["e169b2bd.e7bfe8"]]},{"id":"e169b2bd.e7bfe8","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":560,"y":200,"wires":[["35218e0d.64d822"]]},{"id":"35218e0d.64d822","type":"mqtt out","z":"957f8ad1.6a417","name":"Send Loudness On Change MQTT Event","topic":"loudness_on_change","qos":"2","retain":"","broker":"914bdd80.272ee","x":800,"y":200,"wires":[]},{"id":"f1b833ca.d3ce48","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":1340,"y":1140,"wires":[]},{"id":"c3554f0f.a1d7f","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":1170,"y":1140,"wires":[["f1b833ca.d3ce48"]]},{"id":"78b15964.dc6d","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"string","property":"payload","propertyType":"msg","key":"topic","joiner":"","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":1010,"y":1140,"wires":[["c3554f0f.a1d7f"]]},{"id":"3b60784d.497168","type":"function","z":"957f8ad1.6a417","name":"Parse volume level","func":"let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;","outputs":1,"noerr":0,"x":730,"y":1180,"wires":[["74cc8a33.aeac14"]]},{"id":"74cc8a33.aeac14","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":890,"y":1180,"wires":[["78b15964.dc6d"]]},{"id":"df04a83c.8d929","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":1300,"y":880,"wires":[]},{"id":"23501197.c1c4b6","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":1120,"y":880,"wires":[["df04a83c.8d929"]]},{"id":"68d97a1d.d575f4","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"string","property":"payload","propertyType":"msg","key":"topic","joiner":"","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":950,"y":880,"wires":[["23501197.c1c4b6"]]},{"id":"7bd90d9e.6f16cc","type":"function","z":"957f8ad1.6a417","name":"Parse volume level","func":"let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;","outputs":1,"noerr":0,"x":670,"y":920,"wires":[["25c26ec7.d9d3c2"]]},{"id":"25c26ec7.d9d3c2","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":830,"y":920,"wires":[["68d97a1d.d575f4"]]},{"id":"d95d1537.689db","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":1340,"y":980,"wires":[]},{"id":"1ee1846e.e7c0a4","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":1160,"y":980,"wires":[["d95d1537.689db"]]},{"id":"ebbba63a.a6b31","type":"join","z":"957f8ad1.6a417","name":"","mode":"custom","build":"string","property":"payload","propertyType":"msg","key":"topic","joiner":"","joinerType":"str","accumulate":false,"timeout":"","count":"","reduceRight":false,"reduceExp":"","reduceInit":"","reduceInitType":"","reduceFixup":"","x":990,"y":980,"wires":[["1ee1846e.e7c0a4"]]},{"id":"4420cfd.03d8ab","type":"function","z":"957f8ad1.6a417","name":"Parse volume level","func":"let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;","outputs":1,"noerr":0,"x":710,"y":1020,"wires":[["4a49431.326dc3c"]]},{"id":"4a49431.326dc3c","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":870,"y":1020,"wires":[["ebbba63a.a6b31"]]},{"id":"8dcbf654.51e548","type":"http in","z":"957f8ad1.6a417","name":"","url":"/loudness/threshold","method":"post","upload":false,"swaggerDoc":"","x":130,"y":1520,"wires":[["5fb68be0.d3347c"]]},{"id":"5fb68be0.d3347c","type":"function","z":"957f8ad1.6a417","name":"Change threshold","func":"if(msg.payload.threshold > 0 && msg.payload.threshold < 100){\n    flow.set('loudThreshold',msg.payload.threshold);\n}\nmsg.payload = msg.payload.threshold;\nreturn msg;\n","outputs":1,"noerr":0,"x":390,"y":1520,"wires":[["1239a313.30265d"]]},{"id":"e897262b.216568","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":700,"y":1480,"wires":[]},{"id":"b8749393.40ca68","type":"http in","z":"957f8ad1.6a417","name":"","url":"/play/volume","method":"get","upload":false,"swaggerDoc":"","x":100,"y":1240,"wires":[["b969e24b.32e268"]]},{"id":"b969e24b.32e268","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/tune.sh","addpay":false,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":380,"y":1240,"wires":[["1600dc45.19ecd4"],[],[]]},{"id":"baaa3603.2490c","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":1180,"y":1240,"wires":[]},{"id":"d3c0f0d0.956b2","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":1000,"y":1240,"wires":[["baaa3603.2490c"]]},{"id":"1600dc45.19ecd4","type":"function","z":"957f8ad1.6a417","name":"Parse volume level","func":"let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nreturn msg;","outputs":1,"noerr":0,"x":670,"y":1240,"wires":[["cba029f7.c7db38"]]},{"id":"cba029f7.c7db38","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":830,"y":1240,"wires":[["d3c0f0d0.956b2"]]},{"id":"d9fecccc.4fc998","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"400","headers":{},"x":700,"y":1560,"wires":[]},{"id":"1239a313.30265d","type":"switch","z":"957f8ad1.6a417","name":"","property":"payload","propertyType":"msg","rules":[{"t":"btwn","v":"0","vt":"num","v2":"100","v2t":"num"},{"t":"else"}],"checkall":"true","repair":false,"outputs":2,"x":570,"y":1520,"wires":[["e897262b.216568"],["d9fecccc.4fc998"]]},{"id":"14b8a7f5.e5ed9","type":"http in","z":"957f8ad1.6a417","name":"","url":"/loudness/threshold","method":"get","upload":false,"swaggerDoc":"","x":130,"y":1600,"wires":[["7a085492.4abe1c"]]},{"id":"7a085492.4abe1c","type":"function","z":"957f8ad1.6a417","name":"Get threshold","func":"msg.payload = {\"loudthreshold\":flow.get('loudThreshold')};\nreturn msg;","outputs":1,"noerr":0,"x":380,"y":1600,"wires":[["81638bee.31285"]]},{"id":"81638bee.31285","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":580,"y":1600,"wires":[["47a2c6a8.ad4788"]]},{"id":"c4860d07.6974a","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":940,"y":1600,"wires":[]},{"id":"47a2c6a8.ad4788","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":760,"y":1600,"wires":[["c4860d07.6974a"]]},{"id":"d8d6b3c.3f4a45","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":450,"y":380,"wires":[["7c5c8d2f.6819d4"]]},{"id":"91745387.4f7398","type":"json","z":"957f8ad1.6a417","name":"","property":"payload","action":"","pretty":false,"x":470,"y":460,"wires":[["ece8015c.f3e7f"]]},{"id":"dcaea33d.00c2c8","type":"http in","z":"957f8ad1.6a417","name":"","url":"/interface/index.html","method":"get","upload":false,"swaggerDoc":"","x":130,"y":1700,"wires":[["46b36450.33bb3c"]]},{"id":"46b36450.33bb3c","type":"file in","z":"957f8ad1.6a417","name":"","filename":"/home/pi/ocs-coussin-connecte/interface/index.html","format":"utf8","chunk":false,"sendError":false,"x":450,"y":1700,"wires":[["48337ced.bca5a4"]]},{"id":"48337ced.bca5a4","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{},"x":760,"y":1700,"wires":[]},{"id":"69d05375.04ff8c","type":"http in","z":"957f8ad1.6a417","name":"","url":"/interface/dashboard.html","method":"get","upload":false,"swaggerDoc":"","x":150,"y":1740,"wires":[["bb3d6e35.d2cc58"]]},{"id":"bb3d6e35.d2cc58","type":"file in","z":"957f8ad1.6a417","name":"","filename":"/home/pi/ocs-coussin-connecte/interface/dashboard.html","format":"utf8","chunk":false,"sendError":false,"x":510,"y":1740,"wires":[["858bd949.2ba27"]]},{"id":"858bd949.2ba27","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{},"x":820,"y":1740,"wires":[]},{"id":"c8232fc4.099e08","type":"http in","z":"957f8ad1.6a417","name":"","url":"/interface/js/createChart.js","method":"get","upload":false,"swaggerDoc":"","x":150,"y":1780,"wires":[["1f758d07.91b1ab"]]},{"id":"1f758d07.91b1ab","type":"file in","z":"957f8ad1.6a417","name":"","filename":"/home/pi/ocs-coussin-connecte/interface/js/createChart.js","format":"utf8","chunk":false,"sendError":false,"x":510,"y":1780,"wires":[["379b5532.8bf8b2"]]},{"id":"379b5532.8bf8b2","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{},"x":840,"y":1780,"wires":[]},{"id":"a3ddd548.96768","type":"http in","z":"957f8ad1.6a417","name":"","url":"/wifi/add","method":"post","upload":false,"swaggerDoc":"","x":90,"y":1900,"wires":[["63df48b.b88f838"]]},{"id":"63df48b.b88f838","type":"function","z":"957f8ad1.6a417","name":"Get SSID and Pass","func":"msg.payload = msg.payload.ssid + \" \" + msg.payload.psk;\nreturn msg;","outputs":1,"noerr":0,"x":310,"y":1900,"wires":[["ad809cd4.7652f8","e01b9483.a624f8"]]},{"id":"ad809cd4.7652f8","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":540,"y":1900,"wires":[["3fa438b.fda9848"]]},{"id":"3fa438b.fda9848","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":780,"y":1900,"wires":[]},{"id":"e01b9483.a624f8","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/add_new_network.sh ","addpay":true,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":660,"y":1960,"wires":[[],[],[]]},{"id":"14812979.9ac7ff","type":"http in","z":"957f8ad1.6a417","name":"","url":"/wifi/reset","method":"post","upload":false,"swaggerDoc":"","x":100,"y":2020,"wires":[["79dc77bd.2d3b9","f4f3d986.ce2d4"]]},{"id":"79dc77bd.2d3b9","type":"function","z":"957f8ad1.6a417","name":"Response status ok","func":"msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;","outputs":1,"noerr":0,"x":320,"y":2020,"wires":[["9a37a281.bb0ca8"]]},{"id":"9a37a281.bb0ca8","type":"http response","z":"957f8ad1.6a417","name":"","statusCode":"200","headers":{"Content-Type":"application/json"},"x":520,"y":2020,"wires":[]},{"id":"f4f3d986.ce2d4","type":"exec","z":"957f8ad1.6a417","command":"/home/pi/ocs-coussin-connecte/scripts/reset_networks.sh","addpay":false,"append":"","useSpawn":"false","timer":"","oldrc":false,"name":"","x":430,"y":2080,"wires":[[],[],[]]},{"id":"1936c7e5.f160c8","type":"inject","z":"957f8ad1.6a417","name":"","topic":"","payload":"Started!","payloadType":"str","repeat":"","crontab":"","once":true,"onceDelay":"","x":440,"y":20,"wires":[["d94c5eb9.1ee64"]]},{"id":"d94c5eb9.1ee64","type":"function","z":"957f8ad1.6a417","name":"init loud threshold","func":"flow.set('loudThreshold',10);\n","outputs":1,"noerr":0,"x":650,"y":20,"wires":[[]]},{"id":"78a75072.fedf68","type":"board-config","z":"","board":"GrovePi"},{"id":"4ad1dd1c.23a9cc","type":"board-config","z":"","board":"GrovePi"},{"id":"914bdd80.272ee","type":"mqtt-broker","z":"","name":"Raspberry Pi Mosquito MQTT Server","broker":"localhost","port":"1883","clientid":"","usetls":false,"compatmode":true,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""}]
+[
+    {
+        "id": "7bab6d30.da3f0c",
+        "type": "tab",
+        "label": "SmartPillow",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "cf651cd3.7de9c",
+        "type": "i2c in",
+        "z": "7bab6d30.da3f0c",
+        "name": "I2C1",
+        "address": "83",
+        "command": "50",
+        "count": "6",
+        "x": 270,
+        "y": 60,
+        "wires": [
+            [
+                "dd731d8a.d610e",
+                "80062b47.5f0c88"
+            ]
+        ]
+    },
+    {
+        "id": "1e1a95c7.249d92",
+        "type": "inject",
+        "z": "7bab6d30.da3f0c",
+        "name": "Accelerometer",
+        "topic": "",
+        "payload": "/dev/i2c-1",
+        "payloadType": "str",
+        "repeat": "0.1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "x": 120,
+        "y": 60,
+        "wires": [
+            [
+                "cf651cd3.7de9c"
+            ]
+        ]
+    },
+    {
+        "id": "dd731d8a.d610e",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "publishSocketMessages",
+        "func": "// TODO: Only publish when data changes ?\n\nlet gForce = 9.80665;\n\nlet x = (msg.payload[1] * 256) + msg.payload[0];\nif (msg.payload[1] > 128)\n    x = 65535 - x;\nx = Math.round(x * 4 * gForce)/1000;\n\nlet y = (msg.payload[3] * 256) + msg.payload[2];\nif (msg.payload[3] > 128)\n    y = 65535 - y;\ny = Math.round(y * 4 * gForce)/1000;\n\nlet z = (msg.payload[5] * 256) + msg.payload[4];\nif (msg.payload[5] > 128)\n    z = 65535 - z;\nz = Math.round(z * 4 * gForce)/1000;\n\n\nmsg.payload = {x: x, y: y, z: z};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 60,
+        "wires": [
+            [
+                "af02c41c.2959f8"
+            ]
+        ]
+    },
+    {
+        "id": "9544b600.640828",
+        "type": "grove analog sensor",
+        "z": "7bab6d30.da3f0c",
+        "name": "Loudness",
+        "pin": "2",
+        "sensor": "sound",
+        "repeat": "0.1",
+        "board": "78a75072.fedf68",
+        "x": 80,
+        "y": 240,
+        "wires": [
+            [
+                "d9398e0e.be7cc8",
+                "35b2826c.df677e",
+                "9f6d8321.f9fd58"
+            ]
+        ]
+    },
+    {
+        "id": "7cbf1bcc.cb5034",
+        "type": "i2c out",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "address": "83",
+        "command": "45",
+        "payload": "8",
+        "payloadType": "num",
+        "count": "1",
+        "x": 260,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "ea97fb85.913d5",
+        "type": "inject",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "topic": "",
+        "payload": "/dev/i2c-1",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "x": 110,
+        "y": 20,
+        "wires": [
+            [
+                "7cbf1bcc.cb5034"
+            ]
+        ]
+    },
+    {
+        "id": "36773d5a.ddeb8a",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/accelerometer",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "1efd3a6a.103e1e"
+            ]
+        ]
+    },
+    {
+        "id": "1efd3a6a.103e1e",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "GetRequest",
+        "func": "msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 290,
+        "y": 140,
+        "wires": [
+            [
+                "d90560ab.3edd2"
+            ]
+        ]
+    },
+    {
+        "id": "80062b47.5f0c88",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "JsonDisplayAccelerometer",
+        "func": "var b1 = msg.payload[0];\nvar b2 = msg.payload[1];\nvar b3 = msg.payload[2];\nvar b4 = msg.payload[3];\nvar b5 = msg.payload[4];\nvar b6 = msg.payload[5];\n\nvar gForce = 9.80665;\n\nvar x = (b2 * 256) + b1;\nif (b2 > 128)\n    x = 65535 - x;\nvar y = (b4 * 256) + b3;\nif (b4 > 128)\n    y = 65535 - y;\nvar z = (b6 * 256) + b5;\nif (b6 > 128)\n    z = 65535 - z;\n\nx = Math.round(x * 4 * gForce)/1000;\ny = Math.round(y * 4 * gForce)/1000;\nz = Math.round(z * 4 * gForce)/1000;\n\nmsg.payload = {x: x, y: y, z: z};\nmsg.parts = 1;\nmsg.topic = \"1\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 100,
+        "wires": [
+            [
+                "cf32198.9d326e8"
+            ]
+        ]
+    },
+    {
+        "id": "2bb00c13.0fd9c4",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "",
+        "propertyType": "full",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 770,
+        "y": 120,
+        "wires": [
+            [
+                "c4f4f116.5d173"
+            ]
+        ]
+    },
+    {
+        "id": "cf32198.9d326e8",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 650,
+        "y": 100,
+        "wires": [
+            [
+                "2bb00c13.0fd9c4"
+            ]
+        ]
+    },
+    {
+        "id": "d90560ab.3edd2",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 650,
+        "y": 140,
+        "wires": [
+            [
+                "2bb00c13.0fd9c4"
+            ]
+        ]
+    },
+    {
+        "id": "5c107bb.1b8b384",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1020,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "c4f4f116.5d173",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "func": "msg.payload = msg.payload[1].payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 890,
+        "y": 120,
+        "wires": [
+            [
+                "5c107bb.1b8b384"
+            ]
+        ]
+    },
+    {
+        "id": "5d7ef11f.c6414",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/loudness",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 320,
+        "wires": [
+            [
+                "25a082ee.8159de"
+            ]
+        ]
+    },
+    {
+        "id": "25a082ee.8159de",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "GetRequest",
+        "func": "msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 270,
+        "y": 320,
+        "wires": [
+            [
+                "cff27cb4.35c03"
+            ]
+        ]
+    },
+    {
+        "id": "39dd9859.48ba38",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "",
+        "propertyType": "full",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 550,
+        "y": 300,
+        "wires": [
+            [
+                "a3eb31fc.22256"
+            ]
+        ]
+    },
+    {
+        "id": "2de2ecdf.593eec",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 430,
+        "y": 280,
+        "wires": [
+            [
+                "39dd9859.48ba38"
+            ]
+        ]
+    },
+    {
+        "id": "cff27cb4.35c03",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 430,
+        "y": 320,
+        "wires": [
+            [
+                "39dd9859.48ba38"
+            ]
+        ]
+    },
+    {
+        "id": "146754e4.f52f93",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 800,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "a3eb31fc.22256",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "func": "msg.payload = msg.payload[1].payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 670,
+        "y": 300,
+        "wires": [
+            [
+                "146754e4.f52f93"
+            ]
+        ]
+    },
+    {
+        "id": "d9398e0e.be7cc8",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "JsonDisplayLoudness",
+        "func": "msg.payload = {loudness: msg.payload * 114 / 1023 - 48};\nmsg.parts = 1;\nmsg.topic = \"1\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 260,
+        "y": 280,
+        "wires": [
+            [
+                "2de2ecdf.593eec"
+            ]
+        ]
+    },
+    {
+        "id": "35b2826c.df677e",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "publishSocketMessages",
+        "func": "msg.payload = {loudness: msg.payload * 114 / 1023 - 48};\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 270,
+        "y": 240,
+        "wires": [
+            [
+                "80228105.6dfc78"
+            ]
+        ]
+    },
+    {
+        "id": "4827889d.4b4cb8",
+        "type": "grove digital sensor",
+        "z": "7bab6d30.da3f0c",
+        "name": "T/H",
+        "board": "4ad1dd1c.23a9cc",
+        "sensor": "dht22",
+        "repeat": "1",
+        "pin": "3",
+        "x": 70,
+        "y": 440,
+        "wires": [
+            [
+                "49f87547.24504c",
+                "a3065958.0ab338"
+            ]
+        ]
+    },
+    {
+        "id": "4e82f8fe.334028",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/temperature",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "8c849e69.a34b4"
+            ]
+        ]
+    },
+    {
+        "id": "4fb4f3e6.d620e4",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 420,
+        "wires": [
+            [
+                "8a8f08cc.e7723"
+            ]
+        ]
+    },
+    {
+        "id": "871bd592.bc5ec8",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
+        },
+        "x": 840,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "49f87547.24504c",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "JsonTemperature",
+        "func": "msg.payload = {temperature: msg.payload.temperature};\nmsg.parts = 1;\nmsg.topic = \"1\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 420,
+        "wires": [
+            [
+                "4fb4f3e6.d620e4"
+            ]
+        ]
+    },
+    {
+        "id": "8a8f08cc.e7723",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "",
+        "propertyType": "full",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 590,
+        "y": 380,
+        "wires": [
+            [
+                "adcaa995.6ab4f8"
+            ]
+        ]
+    },
+    {
+        "id": "adcaa995.6ab4f8",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "func": "msg.payload = msg.payload[1].payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 710,
+        "y": 380,
+        "wires": [
+            [
+                "871bd592.bc5ec8"
+            ]
+        ]
+    },
+    {
+        "id": "8c849e69.a34b4",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "GetRequest",
+        "func": "msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 290,
+        "y": 380,
+        "wires": [
+            [
+                "56e99dd.9338a64"
+            ]
+        ]
+    },
+    {
+        "id": "29b55b98.434e7c",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/humidity",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 500,
+        "wires": [
+            [
+                "f32dd1aa.8b06a8"
+            ]
+        ]
+    },
+    {
+        "id": "f32dd1aa.8b06a8",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "GetRequest",
+        "func": "msg.parts = 2;\nmsg.topic = \"2\";\nmsg.complete = true\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 290,
+        "y": 500,
+        "wires": [
+            [
+                "97eeb92c.1865c"
+            ]
+        ]
+    },
+    {
+        "id": "a3065958.0ab338",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "JsonHumidity",
+        "func": "msg.payload = {humidity: msg.payload.humidity};\nmsg.parts = 1;\nmsg.topic = \"1\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 300,
+        "y": 460,
+        "wires": [
+            [
+                "131fca11.40b4c6"
+            ]
+        ]
+    },
+    {
+        "id": "97eeb92c.1865c",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 500,
+        "wires": [
+            [
+                "aa5842fb.fdea"
+            ]
+        ]
+    },
+    {
+        "id": "aa5842fb.fdea",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "",
+        "propertyType": "full",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 590,
+        "y": 500,
+        "wires": [
+            [
+                "8de85088.ef2ea"
+            ]
+        ]
+    },
+    {
+        "id": "8de85088.ef2ea",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "func": "msg.payload = msg.payload[1].payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 710,
+        "y": 500,
+        "wires": [
+            [
+                "608eefa6.0c49f"
+            ]
+        ]
+    },
+    {
+        "id": "608eefa6.0c49f",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 840,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "4ee47f32.69af8",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/sound",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "1dbe357e.bd8453"
+            ]
+        ]
+    },
+    {
+        "id": "1dbe357e.bd8453",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Get Video ID",
+        "func": "msg.payload = msg.payload.id;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 580,
+        "wires": [
+            [
+                "5333a18d.d53af",
+                "aa2a40e7.ca59f8"
+            ]
+        ]
+    },
+    {
+        "id": "259cab77.79a5dc",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 660,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "5333a18d.d53af",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 490,
+        "y": 580,
+        "wires": [
+            [
+                "259cab77.79a5dc"
+            ]
+        ]
+    },
+    {
+        "id": "f7514b59.eb3048",
+        "type": "grove digital output",
+        "z": "7bab6d30.da3f0c",
+        "name": "Buzz",
+        "board": "78a75072.fedf68",
+        "pin": "2",
+        "x": 460,
+        "y": 1450,
+        "wires": []
+    },
+    {
+        "id": "af02c41c.2959f8",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 630,
+        "y": 60,
+        "wires": [
+            [
+                "6c3668ad.cd35b"
+            ]
+        ]
+    },
+    {
+        "id": "6c3668ad.cd35b",
+        "type": "mqtt out",
+        "z": "7bab6d30.da3f0c",
+        "name": "Send Acceleration MQTT Event",
+        "topic": "acceleration",
+        "qos": "2",
+        "retain": "",
+        "broker": "914bdd80.272ee",
+        "x": 830,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "89e494e2.3b2f18",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/mute",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 880,
+        "wires": [
+            [
+                "7ad67e99.e048b",
+                "f458c968.f20058"
+            ]
+        ]
+    },
+    {
+        "id": "7ad67e99.e048b",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/tune.sh m",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 380,
+        "y": 920,
+        "wires": [
+            [
+                "ba631433.f4c2"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "80228105.6dfc78",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 450,
+        "y": 240,
+        "wires": [
+            [
+                "babe0386.572128"
+            ]
+        ]
+    },
+    {
+        "id": "babe0386.572128",
+        "type": "mqtt out",
+        "z": "7bab6d30.da3f0c",
+        "name": "Send Loudness MQTT Event",
+        "topic": "loudness",
+        "qos": "2",
+        "retain": "",
+        "broker": "914bdd80.272ee",
+        "x": 650,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "bf71fad0.6b913",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/unmute",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 980,
+        "wires": [
+            [
+                "bf786888.827bf",
+                "a3b281ea.de9498"
+            ]
+        ]
+    },
+    {
+        "id": "bf786888.827bf",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/tune.sh um",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 410,
+        "y": 1020,
+        "wires": [
+            [
+                "47714ea7.5280b8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "99e55a62.9872d",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/volume_down",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 1140,
+        "wires": [
+            [
+                "a4d164c4.8a1ce8",
+                "a9918d6a.623508"
+            ]
+        ]
+    },
+    {
+        "id": "a4d164c4.8a1ce8",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/tune.sh dv 10",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 430,
+        "y": 1180,
+        "wires": [
+            [
+                "7fd26f75.50d52"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "db6cf0dc.a50bf8",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/volume_up",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 1060,
+        "wires": [
+            [
+                "dbb960d5.a188e8",
+                "25b340b5.52152"
+            ]
+        ]
+    },
+    {
+        "id": "dbb960d5.a188e8",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/tune.sh uv 10",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 440,
+        "y": 1100,
+        "wires": [
+            [
+                "6e2b1fce.40fd58"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "adf31f8f.c90158",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1360,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "48048ead.370d5",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1190,
+        "y": 1060,
+        "wires": [
+            [
+                "adf31f8f.c90158"
+            ]
+        ]
+    },
+    {
+        "id": "634643e9.561b14",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/stream",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 680,
+        "wires": [
+            [
+                "b949acf0.ee0e2"
+            ]
+        ]
+    },
+    {
+        "id": "5799a6a.7642c58",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/play_stream_sound.sh ",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 640,
+        "y": 720,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b949acf0.ee0e2",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Get Stream URL",
+        "func": "msg.payload = msg.payload.url;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 320,
+        "y": 680,
+        "wires": [
+            [
+                "5799a6a.7642c58",
+                "2f4e7331.0d0e64"
+            ]
+        ]
+    },
+    {
+        "id": "5fe81172.1d3f8",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 680,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "2f4e7331.0d0e64",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 680,
+        "wires": [
+            [
+                "5fe81172.1d3f8"
+            ]
+        ]
+    },
+    {
+        "id": "99ae7450.07b06",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/stop",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 780,
+        "wires": [
+            [
+                "f3029bc8.5c9d1",
+                "ffc43d97.f50138"
+            ]
+        ]
+    },
+    {
+        "id": "ffc43d97.f50138",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/stop_sound.sh ",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 420,
+        "y": 820,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "3eb027f1.2978d8",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 480,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "f3029bc8.5c9d1",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 780,
+        "wires": [
+            [
+                "3eb027f1.2978d8"
+            ]
+        ]
+    },
+    {
+        "id": "aa2a40e7.ca59f8",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/play_youtube_sound.sh ",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 630,
+        "y": 620,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "a9bae24d.d81ac8",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/buzz",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 1390,
+        "wires": [
+            [
+                "812caa36.bd4718",
+                "4018a10a.4a3d98",
+                "ea529a20.f779b"
+            ]
+        ]
+    },
+    {
+        "id": "812caa36.bd4718",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 330,
+        "y": 1390,
+        "wires": [
+            [
+                "99d2207b.534b98"
+            ]
+        ]
+    },
+    {
+        "id": "99d2207b.534b98",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 530,
+        "y": 1390,
+        "wires": []
+    },
+    {
+        "id": "4018a10a.4a3d98",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "On",
+        "func": "msg = { payload : true };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 280,
+        "y": 1430,
+        "wires": [
+            [
+                "f7514b59.eb3048"
+            ]
+        ]
+    },
+    {
+        "id": "ea529a20.f779b",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "TimeoutOff",
+        "func": "setTimeout(function(){\n    msg = { payload : false };\n    node.send(msg);\n}, 2000);",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 300,
+        "y": 1470,
+        "wires": [
+            [
+                "f7514b59.eb3048"
+            ]
+        ]
+    },
+    {
+        "id": "25b340b5.52152",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "string",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1020,
+        "y": 1060,
+        "wires": [
+            [
+                "48048ead.370d5"
+            ]
+        ]
+    },
+    {
+        "id": "6e2b1fce.40fd58",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Parse volume level",
+        "func": "let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 750,
+        "y": 1100,
+        "wires": [
+            [
+                "a4887429.6bdd08"
+            ]
+        ]
+    },
+    {
+        "id": "a4887429.6bdd08",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 910,
+        "y": 1100,
+        "wires": [
+            [
+                "25b340b5.52152"
+            ]
+        ]
+    },
+    {
+        "id": "9f6d8321.f9fd58",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "publishSocketMessagesWithThreshold",
+        "func": "var loud = flow.get('loud')||0;\nvar current = msg.payload * 114 / 1023 - 48;\nflow.set('loud',current);\nvar thresh = (flow.get('loudThreshold') / 100);\nif (current * (1 + thresh) > loud || current * (1 - thresh) < loud){\n    msg.payload = {loudness: current};\n    return msg\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 200,
+        "wires": [
+            [
+                "2ada8780.ffa1e"
+            ]
+        ]
+    },
+    {
+        "id": "2ada8780.ffa1e",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 560,
+        "y": 200,
+        "wires": [
+            [
+                "38793506.f1f042"
+            ]
+        ]
+    },
+    {
+        "id": "38793506.f1f042",
+        "type": "mqtt out",
+        "z": "7bab6d30.da3f0c",
+        "name": "Send Loudness On Change MQTT Event",
+        "topic": "loudness_on_change",
+        "qos": "2",
+        "retain": "",
+        "broker": "914bdd80.272ee",
+        "x": 800,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "4d1e4ac3.6dbf84",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1340,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "9286df63.1e7e98",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1170,
+        "y": 1140,
+        "wires": [
+            [
+                "4d1e4ac3.6dbf84"
+            ]
+        ]
+    },
+    {
+        "id": "a9918d6a.623508",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "string",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1010,
+        "y": 1140,
+        "wires": [
+            [
+                "9286df63.1e7e98"
+            ]
+        ]
+    },
+    {
+        "id": "7fd26f75.50d52",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Parse volume level",
+        "func": "let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 730,
+        "y": 1180,
+        "wires": [
+            [
+                "21b29d98.38d6e2"
+            ]
+        ]
+    },
+    {
+        "id": "21b29d98.38d6e2",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 890,
+        "y": 1180,
+        "wires": [
+            [
+                "a9918d6a.623508"
+            ]
+        ]
+    },
+    {
+        "id": "5b100653.a41d68",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1300,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "2564c614.078fba",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1120,
+        "y": 880,
+        "wires": [
+            [
+                "5b100653.a41d68"
+            ]
+        ]
+    },
+    {
+        "id": "f458c968.f20058",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "string",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 950,
+        "y": 880,
+        "wires": [
+            [
+                "2564c614.078fba"
+            ]
+        ]
+    },
+    {
+        "id": "ba631433.f4c2",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Parse volume level",
+        "func": "let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 670,
+        "y": 920,
+        "wires": [
+            [
+                "8ccb5a80.b251e8"
+            ]
+        ]
+    },
+    {
+        "id": "8ccb5a80.b251e8",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 830,
+        "y": 920,
+        "wires": [
+            [
+                "f458c968.f20058"
+            ]
+        ]
+    },
+    {
+        "id": "99a120de.52738",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1340,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "cb715d1d.dd45d8",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1160,
+        "y": 980,
+        "wires": [
+            [
+                "99a120de.52738"
+            ]
+        ]
+    },
+    {
+        "id": "a3b281ea.de9498",
+        "type": "join",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "mode": "custom",
+        "build": "string",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 990,
+        "y": 980,
+        "wires": [
+            [
+                "cb715d1d.dd45d8"
+            ]
+        ]
+    },
+    {
+        "id": "47714ea7.5280b8",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Parse volume level",
+        "func": "let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nmsg.complete = true;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 710,
+        "y": 1020,
+        "wires": [
+            [
+                "9ca5303a.74a138"
+            ]
+        ]
+    },
+    {
+        "id": "9ca5303a.74a138",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 870,
+        "y": 1020,
+        "wires": [
+            [
+                "a3b281ea.de9498"
+            ]
+        ]
+    },
+    {
+        "id": "c7045556.84fa18",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/loudness/threshold",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1520,
+        "wires": [
+            [
+                "fdfe27b5.15cff8"
+            ]
+        ]
+    },
+    {
+        "id": "fdfe27b5.15cff8",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Change threshold",
+        "func": "if(msg.payload.threshold > 0 && msg.payload.threshold < 100){\n    flow.set('loudThreshold',msg.payload.threshold);\n}\nmsg.payload = msg.payload.threshold;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 390,
+        "y": 1520,
+        "wires": [
+            [
+                "cf703130.b474a8"
+            ]
+        ]
+    },
+    {
+        "id": "909c03bf.74a9f",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 700,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "55830dc2.13c71c",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/play/volume",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 1240,
+        "wires": [
+            [
+                "a4a80f44.d08978"
+            ]
+        ]
+    },
+    {
+        "id": "a4a80f44.d08978",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/tune.sh",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 380,
+        "y": 1240,
+        "wires": [
+            [
+                "f1609823.d35b78"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "2e750400.6e1d14",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1180,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "22712fdd.fdea7",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1000,
+        "y": 1240,
+        "wires": [
+            [
+                "2e750400.6e1d14"
+            ]
+        ]
+    },
+    {
+        "id": "f1609823.d35b78",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Parse volume level",
+        "func": "let results = msg.payload.split(\"\\n\");\nmsg.payload = { volume: results[0], muted: results[1]==\"off\" };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 670,
+        "y": 1240,
+        "wires": [
+            [
+                "f9f5e076.27a9c8"
+            ]
+        ]
+    },
+    {
+        "id": "f9f5e076.27a9c8",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 830,
+        "y": 1240,
+        "wires": [
+            [
+                "22712fdd.fdea7"
+            ]
+        ]
+    },
+    {
+        "id": "f7d3abcf.608408",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "400",
+        "headers": {},
+        "x": 700,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "cf703130.b474a8",
+        "type": "switch",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "100",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 570,
+        "y": 1520,
+        "wires": [
+            [
+                "909c03bf.74a9f"
+            ],
+            [
+                "f7d3abcf.608408"
+            ]
+        ]
+    },
+    {
+        "id": "ae86a9dd.a90c48",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/loudness/threshold",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1600,
+        "wires": [
+            [
+                "a6f9045b.9186a"
+            ]
+        ]
+    },
+    {
+        "id": "a6f9045b.9186a",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Get threshold",
+        "func": "msg.payload = {\"loudthreshold\":flow.get('loudThreshold')};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 380,
+        "y": 1600,
+        "wires": [
+            [
+                "e62c743e.714c98"
+            ]
+        ]
+    },
+    {
+        "id": "e62c743e.714c98",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 580,
+        "y": 1600,
+        "wires": [
+            [
+                "eb0f2232.688e4"
+            ]
+        ]
+    },
+    {
+        "id": "f4193a63.0892d",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 940,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "eb0f2232.688e4",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 1600,
+        "wires": [
+            [
+                "f4193a63.0892d"
+            ]
+        ]
+    },
+    {
+        "id": "56e99dd.9338a64",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 450,
+        "y": 380,
+        "wires": [
+            [
+                "8a8f08cc.e7723"
+            ]
+        ]
+    },
+    {
+        "id": "131fca11.40b4c6",
+        "type": "json",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 460,
+        "wires": [
+            [
+                "aa5842fb.fdea"
+            ]
+        ]
+    },
+    {
+        "id": "fa8a5f13.9f155",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/interface/index.html",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1700,
+        "wires": [
+            [
+                "dd79e88e.b27bf8"
+            ]
+        ]
+    },
+    {
+        "id": "dd79e88e.b27bf8",
+        "type": "file in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "filename": "/home/pi/ocs-coussin-connecte/interface/index.html",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "x": 450,
+        "y": 1700,
+        "wires": [
+            [
+                "575051c8.1dfb18"
+            ]
+        ]
+    },
+    {
+        "id": "575051c8.1dfb18",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 760,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "c206ab0c.91904",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/interface/dashboard.html",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 1740,
+        "wires": [
+            [
+                "862222b5.9eb6"
+            ]
+        ]
+    },
+    {
+        "id": "862222b5.9eb6",
+        "type": "file in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "filename": "/home/pi/ocs-coussin-connecte/interface/dashboard.html",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "x": 510,
+        "y": 1740,
+        "wires": [
+            [
+                "3c5e766c.ed935a"
+            ]
+        ]
+    },
+    {
+        "id": "3c5e766c.ed935a",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 820,
+        "y": 1740,
+        "wires": []
+    },
+    {
+        "id": "d3b18212.35b93",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/interface/js/createChart.js",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 1780,
+        "wires": [
+            [
+                "5ea1bbbe.ad7bb4"
+            ]
+        ]
+    },
+    {
+        "id": "5ea1bbbe.ad7bb4",
+        "type": "file in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "filename": "/home/pi/ocs-coussin-connecte/interface/js/createChart.js",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "x": 510,
+        "y": 1780,
+        "wires": [
+            [
+                "7f6f4fd1.827758"
+            ]
+        ]
+    },
+    {
+        "id": "7f6f4fd1.827758",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 840,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "3fe21208.2a8d26",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/wifi/add",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 1900,
+        "wires": [
+            [
+                "d507f723.82729"
+            ]
+        ]
+    },
+    {
+        "id": "d507f723.82729",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Get SSID and Pass",
+        "func": "msg.payload = msg.payload.ssid + \" \" + msg.payload.psk;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 1900,
+        "wires": [
+            [
+                "e03c50fe.e8eb68",
+                "73d9de23.7fc3b8"
+            ]
+        ]
+    },
+    {
+        "id": "e03c50fe.e8eb68",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 540,
+        "y": 1900,
+        "wires": [
+            [
+                "b8b7f702.6c6d38"
+            ]
+        ]
+    },
+    {
+        "id": "b8b7f702.6c6d38",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 780,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "73d9de23.7fc3b8",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/add_new_network.sh ",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 660,
+        "y": 1960,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "37af7c09.d58f24",
+        "type": "http in",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "url": "/wifi/reset",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 2020,
+        "wires": [
+            [
+                "d3c491d0.37536",
+                "e44f4d3d.5b0868"
+            ]
+        ]
+    },
+    {
+        "id": "d3c491d0.37536",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "Response status ok",
+        "func": "msg.payload = {};\nmsg.status = \"ok\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 320,
+        "y": 2020,
+        "wires": [
+            [
+                "a1019c3a.804d8"
+            ]
+        ]
+    },
+    {
+        "id": "a1019c3a.804d8",
+        "type": "http response",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 520,
+        "y": 2020,
+        "wires": []
+    },
+    {
+        "id": "e44f4d3d.5b0868",
+        "type": "exec",
+        "z": "7bab6d30.da3f0c",
+        "command": "/home/pi/ocs-coussin-connecte/scripts/reset_networks.sh",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 430,
+        "y": 2080,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "5ebc3012.a4c708",
+        "type": "inject",
+        "z": "7bab6d30.da3f0c",
+        "name": "",
+        "topic": "",
+        "payload": "Started!",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "",
+        "x": 440,
+        "y": 20,
+        "wires": [
+            [
+                "18e6f1da.4569c6"
+            ]
+        ]
+    },
+    {
+        "id": "18e6f1da.4569c6",
+        "type": "function",
+        "z": "7bab6d30.da3f0c",
+        "name": "init loud threshold",
+        "func": "flow.set('loudThreshold',10);\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 650,
+        "y": 20,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "78a75072.fedf68",
+        "type": "board-config",
+        "z": "",
+        "board": "GrovePi"
+    },
+    {
+        "id": "4ad1dd1c.23a9cc",
+        "type": "board-config",
+        "z": "",
+        "board": "GrovePi"
+    },
+    {
+        "id": "914bdd80.272ee",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "Raspberry Pi Mosquito MQTT Server",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]

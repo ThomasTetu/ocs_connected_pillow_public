@@ -2,7 +2,7 @@
 
 ## Liens utiles
  * [Wiki](https://github.com/ltb-bossuyt/ocs-coussin-connecte/wiki)
- * [Installation de l'oreiller connecté](src/INSTALL.md) (from scratch)
+ * [Installation de l'oreiller connecté](INSTALL.md) (from scratch)
 
 ## Fichiers fournis
 

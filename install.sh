@@ -9,3 +9,6 @@ sudo systemctl enable nodered.service
 sudo apt install mosquitto
 # Make Mosquitto run on system boot
 sudo systemctl enable mosquitto.service
+
+# Install youtube-dl for the downloading script
+sudo apt install youtube-dl
